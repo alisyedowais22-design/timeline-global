@@ -10,19 +10,51 @@ const COUNTRY_REGION = {
 
 export const useGeoRedirect = () => {
   const [region, setRegion] = useState('LOADING');
+
   useEffect(() => {
     const hostname = window.location.hostname;
     const isLocal  = hostname === 'localhost' || hostname === '127.0.0.1';
     if (isLocal) { setRegion('PK'); return; }
+
     const detect = async () => {
-      try {
-        const res = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(4000) });
-        const data = await res.json();
-        setRegion(COUNTRY_REGION[data.country_code] || 'GLOBAL');
-      } catch { setRegion('GLOBAL'); }
+      // Try multiple geo APIs — agar ek fail ho to doosra use karo
+      const APIs = [
+        async () => {
+          const r = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(4000) });
+          const d = await r.json();
+          return d.country_code;
+        },
+        async () => {
+          const r = await fetch('https://api.country.is/', { signal: AbortSignal.timeout(4000) });
+          const d = await r.json();
+          return d.country;
+        },
+        async () => {
+          const r = await fetch('https://freeipapi.com/api/json/', { signal: AbortSignal.timeout(4000) });
+          const d = await r.json();
+          return d.countryCode;
+        },
+      ];
+
+      for (const api of APIs) {
+        try {
+          const code = await api();
+          if (code) {
+            setRegion(COUNTRY_REGION[code] || 'GLOBAL');
+            return;
+          }
+        } catch {
+          // next API try karo
+          continue;
+        }
+      }
+      // Sab fail — GLOBAL show karo
+      setRegion('GLOBAL');
     };
+
     detect();
   }, []);
+
   return region;
 };
 

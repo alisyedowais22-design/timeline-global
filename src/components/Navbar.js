@@ -63,19 +63,19 @@ const DEVICES = [
 const PK_PRODUCTS_URL = 'https://website.teletix.pk/products';
 
 const Navbar = () => {
-  const [scrolled, setScrolled]                     = useState(false);
-  const [mobileOpen, setMobileOpen]                 = useState(false);
-  const [solutionsOpen, setSolutionsOpen]           = useState(false);
-  const [devicesOpen, setDevicesOpen]               = useState(false);
+  const [scrolled, setScrolled]                       = useState(false);
+  const [mobileOpen, setMobileOpen]                   = useState(false);
+  const [solutionsOpen, setSolutionsOpen]             = useState(false);
+  const [devicesOpen, setDevicesOpen]                 = useState(false);
   const [mobileSolutionsOpen, setMobileSolutionsOpen] = useState(false);
-  const [mobileDevicesOpen, setMobileDevicesOpen]   = useState(false);
+  const [mobileDevicesOpen, setMobileDevicesOpen]     = useState(false);
 
   const solutionsRef = useRef(null);
   const devicesRef   = useRef(null);
 
-  const region        = useGeoRedirect();
-  const isPK          = region === 'PK';
-  const loading       = region === 'LOADING';
+  const region         = useGeoRedirect();
+  const isPK           = region === 'PK';
+  const loading        = region === 'LOADING';
   const showComingSoon = !isPK && !loading;
 
   const handleServiceClick = (service) => {
@@ -107,11 +107,16 @@ const Navbar = () => {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const linkColor = scrolled ? '#4b5563' : '#fff';
+  // Scrolled hone par white, nahi hone par dark overlay for video visibility
+  const navBg = scrolled
+    ? '#fff'
+    : 'rgba(0,0,0,0.35)';
+
+  const linkColor = '#fff'; // hamesha white — scrolled pe bhi readable
 
   return (
     <nav style={{
-      background: scrolled ? '#fff' : 'transparent',
+      background: navBg,
       borderBottom: scrolled ? '1px solid #e5e7eb' : '1px solid transparent',
       boxShadow: scrolled ? '0 2px 16px rgba(0,0,0,0.07)' : 'none',
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
@@ -133,14 +138,15 @@ const Navbar = () => {
             <a key={link.label} href={link.href} style={{
               padding: '7px 14px', fontSize: '13.5px',
               fontFamily: 'Poppins, sans-serif', fontWeight: '500',
-              color: linkColor, borderRadius: '7px', textDecoration: 'none', transition: 'all 0.2s',
+              color: scrolled ? '#374151' : '#fff',
+              borderRadius: '7px', textDecoration: 'none', transition: 'all 0.2s',
             }}
-              onMouseEnter={e => { e.currentTarget.style.color = '#E8312A'; e.currentTarget.style.background = 'rgba(254,242,242,0.15)'; }}
-              onMouseLeave={e => { e.currentTarget.style.color = linkColor; e.currentTarget.style.background = 'transparent'; }}
+              onMouseEnter={e => { e.currentTarget.style.color = '#E8312A'; }}
+              onMouseLeave={e => { e.currentTarget.style.color = scrolled ? '#374151' : '#fff'; }}
             >{link.label}</a>
           ))}
 
-          {/* ── Devices dropdown ── */}
+          {/* Devices dropdown */}
           <div ref={devicesRef} style={{ position: 'relative' }}>
             <button
               onClick={() => { setDevicesOpen(!devicesOpen); setSolutionsOpen(false); }}
@@ -148,7 +154,7 @@ const Navbar = () => {
                 display: 'flex', alignItems: 'center', gap: '4px',
                 padding: '7px 14px', fontSize: '13.5px',
                 fontFamily: 'Poppins, sans-serif', fontWeight: '500',
-                color: devicesOpen ? '#E8312A' : linkColor,
+                color: devicesOpen ? '#E8312A' : (scrolled ? '#374151' : '#fff'),
                 borderRadius: '7px', background: 'none', border: 'none',
                 cursor: 'pointer', transition: 'all 0.2s',
               }}
@@ -168,7 +174,6 @@ const Navbar = () => {
                 zIndex: 9999,
                 animation: 'fadeDown 0.18s ease',
               }}>
-                {/* Header */}
                 <div style={{
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                   paddingBottom: 10, marginBottom: 12,
@@ -191,7 +196,6 @@ const Navbar = () => {
                   )}
                 </div>
 
-                {/* Categories grid */}
                 <div style={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(5, 1fr)',
@@ -199,7 +203,6 @@ const Navbar = () => {
                 }}>
                   {DEVICES.map((cat) => (
                     <div key={cat.category}>
-                      {/* Category header */}
                       <div style={{
                         fontSize: '11px', fontWeight: '700',
                         color: '#E8312A', fontFamily: 'Poppins, sans-serif',
@@ -209,14 +212,12 @@ const Navbar = () => {
                       }}>
                         {cat.category}
                       </div>
-                      {/* Items */}
                       {cat.items.map((item) => (
                         <div
                           key={item.label}
                           onClick={handleDeviceClick}
                           style={{
-                            padding: '5px 6px',
-                            borderRadius: 8,
+                            padding: '5px 6px', borderRadius: 8,
                             cursor: isPK ? 'pointer' : 'default',
                             transition: 'background 0.15s',
                           }}
@@ -239,21 +240,17 @@ const Navbar = () => {
                   ))}
                 </div>
 
-                {/* Footer */}
                 {isPK && (
                   <div style={{
                     marginTop: 16, paddingTop: 12,
                     borderTop: '1px solid #f3f4f6',
                     textAlign: 'center',
                   }}>
-                    <span
-                      onClick={handleDeviceClick}
-                      style={{
-                        fontSize: '13px', fontWeight: '700',
-                        color: '#E8312A', cursor: 'pointer',
-                        fontFamily: 'Poppins, sans-serif',
-                      }}
-                    >
+                    <span onClick={handleDeviceClick} style={{
+                      fontSize: '13px', fontWeight: '700',
+                      color: '#E8312A', cursor: 'pointer',
+                      fontFamily: 'Poppins, sans-serif',
+                    }}>
                       View All Products →
                     </span>
                   </div>
@@ -262,7 +259,7 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* ── Solutions dropdown ── */}
+          {/* Solutions dropdown */}
           <div ref={solutionsRef} style={{ position: 'relative' }}>
             <button
               onClick={() => { setSolutionsOpen(!solutionsOpen); setDevicesOpen(false); }}
@@ -270,7 +267,7 @@ const Navbar = () => {
                 display: 'flex', alignItems: 'center', gap: '4px',
                 padding: '7px 14px', fontSize: '13.5px',
                 fontFamily: 'Poppins, sans-serif', fontWeight: '500',
-                color: solutionsOpen ? '#E8312A' : linkColor,
+                color: solutionsOpen ? '#E8312A' : (scrolled ? '#374151' : '#fff'),
                 borderRadius: '7px', background: 'none', border: 'none',
                 cursor: 'pointer', transition: 'all 0.2s',
               }}
@@ -334,7 +331,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Right — CTA + hamburger */}
+        {/* Right CTA + hamburger */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <a href="#contact" style={{
             background: '#E8312A', color: '#fff', padding: '9px 20px', borderRadius: '8px',
@@ -348,14 +345,14 @@ const Navbar = () => {
           </a>
           <button onClick={() => setMobileOpen(!mobileOpen)} className="mob-btn" style={{
             display: 'none', background: 'none', border: 'none',
-            cursor: 'pointer', color: scrolled ? '#374151' : '#fff',
+            cursor: 'pointer', color: '#fff',
           }}>
             {mobileOpen ? <CloseIcon /> : <MenuIcon />}
           </button>
         </div>
       </div>
 
-      {/* ── Mobile menu ── */}
+      {/* Mobile menu */}
       {mobileOpen && (
         <div style={{ background: '#fff', borderTop: '1px solid #f3f4f6', padding: '12px 24px 20px' }}>
           {NAV_LINKS.map(link => (
@@ -391,17 +388,11 @@ const Navbar = () => {
                       {cat.category}
                     </div>
                     {cat.items.map(item => (
-                      <div
-                        key={item.label}
-                        onClick={handleDeviceClick}
-                        style={{
-                          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                          padding: '8px 0', fontSize: '14px', fontWeight: '500',
-                          fontFamily: 'Poppins, sans-serif', color: '#374151',
-                          borderBottom: '1px solid #f9fafb',
-                          cursor: isPK ? 'pointer' : 'default',
-                        }}
-                      >
+                      <div key={item.label} onClick={handleDeviceClick} style={{
+                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                        padding: '8px 0', borderBottom: '1px solid #f9fafb',
+                        cursor: isPK ? 'pointer' : 'default',
+                      }}>
                         <div>
                           <div style={{ fontSize: '12.5px', fontWeight: '600', color: isPK ? '#111827' : '#9ca3af' }}>{item.label}</div>
                           <div style={{ fontSize: '11px', color: '#9ca3af' }}>{item.desc}</div>
@@ -411,9 +402,7 @@ const Navbar = () => {
                             fontSize: '9px', fontWeight: '700',
                             background: '#fef3c7', color: '#d97706',
                             padding: '2px 7px', borderRadius: '20px', textTransform: 'uppercase',
-                          }}>
-                            Coming Soon
-                          </span>
+                          }}>Coming Soon</span>
                         )}
                       </div>
                     ))}
@@ -442,26 +431,20 @@ const Navbar = () => {
                   <div style={{ padding: '10px 0', fontSize: '13px', color: '#9ca3af' }}>Loading...</div>
                 ) : (
                   SERVICES.map(service => (
-                    <div
-                      key={service.slug}
-                      onClick={() => handleServiceClick(service)}
-                      style={{
-                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                        padding: '10px 0', fontSize: '14px', fontWeight: '500',
-                        fontFamily: 'Poppins, sans-serif', color: '#374151',
-                        borderBottom: '1px solid #f9fafb',
-                        cursor: isPK ? 'pointer' : 'default',
-                      }}
-                    >
+                    <div key={service.slug} onClick={() => handleServiceClick(service)} style={{
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                      padding: '10px 0', fontSize: '14px', fontWeight: '500',
+                      fontFamily: 'Poppins, sans-serif', color: '#374151',
+                      borderBottom: '1px solid #f9fafb',
+                      cursor: isPK ? 'pointer' : 'default',
+                    }}>
                       <span>{service.label}</span>
                       {showComingSoon && (
                         <span style={{
                           fontSize: '9px', fontWeight: '700',
                           background: '#fef3c7', color: '#d97706',
                           padding: '2px 7px', borderRadius: '20px', textTransform: 'uppercase',
-                        }}>
-                          Coming Soon
-                        </span>
+                        }}>Coming Soon</span>
                       )}
                     </div>
                   ))
