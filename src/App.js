@@ -40,6 +40,7 @@ function App() {
 
   return (
     <div>
+      <TopBar />
       <Navbar />
 
       <main>

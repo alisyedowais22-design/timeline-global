@@ -3,31 +3,40 @@ import { Phone, Mail, MapPin, Clock, Send, CheckCircle, ChevronDown } from 'luci
 
 const OFFICES = [
   {
-    region: 'Pakistan HQ',
-    flag: '🇵🇰',
-    address: 'Khayaban e Jami. 18c DHA Karachi',
-    phone: '+92 320 0002283',
-    email: 'support@teletix.me',
-    hours: 'Mon–Sat: 9:00 AM – 6:00 PM PKT',
-    color: '#E8312A',
-  },
-  {
-    region: 'UAE Office',
-    flag: '🇦🇪',
-    address: 'Business Bay, Dubai, United Arab Emirates',
-    phone: '+971 4 000 0000',
-    email: 'info@timelinetelematics.ae',
-    hours: 'Mon–Fri: 9:00 AM – 6:00 PM GST',
-    color: '#009A44',
-  },
-  {
     region: 'Europe Office',
+    code: 'EU',
     flag: '🇪🇺',
     address: 'Frankfurt am Main, Germany',
     phone: '+49 69 000 0000',
     email: 'info@timelinetelematics.eu',
     hours: 'Mon–Fri: 9:00 AM – 5:00 PM CET',
     color: '#003399',
+    image: 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&q=80',
+    tagline: 'European Regional Office',
+  },
+  {
+    region: 'UAE Office',
+    code: 'AE',
+    flag: '🇦🇪',
+    address: 'Business Bay, Dubai, United Arab Emirates',
+    phone: '+971 4 000 0000',
+    email: 'info@timelinetelematics.ae',
+    hours: 'Mon–Fri: 9:00 AM – 6:00 PM GST',
+    color: '#009A44',
+    image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80',
+    tagline: 'Middle East Regional Office',
+  },
+  {
+    region: 'Pakistan HQ',
+    code: 'PK',
+    flag: '🇵🇰',
+    address: 'Khayaban e Jami. 18c DHA Karachi',
+    phone: '+92 320 0002283',
+    email: 'support@teletix.me',
+    hours: 'Mon–Sat: 9:00 AM – 6:00 PM PKT',
+    color: '#E8312A',
+    image: 'https://images.unsplash.com/photo-1635016288720-c52507b9a717?q=80&w=435&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    tagline: 'Headquarters',
   },
 ];
 
@@ -49,7 +58,6 @@ const inputBase = {
   boxSizing: 'border-box',
 };
 
-// ── Field — outside Contact so focus never breaks ────────────
 const Field = ({ label, name, type = 'text', placeholder, required, value, onChange, error }) => {
   const [focused, setFocused] = useState(false);
   return (
@@ -98,6 +106,109 @@ const FadeIn = ({ children, delay = 0, style = {} }) => {
   );
 };
 
+const OfficeCard = ({ office, index }) => {
+  const [ref, visible] = useVisible();
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div
+      ref={ref}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        borderRadius: '20px',
+        overflow: 'hidden',
+        border: '1px solid #e5e7eb',
+        background: '#fff',
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(32px)',
+        transition: `opacity 0.7s cubic-bezier(0.16,1,0.3,1) ${index * 0.12}s, transform 0.7s cubic-bezier(0.16,1,0.3,1) ${index * 0.12}s, box-shadow 0.3s ease`,
+        boxShadow: hovered ? '0 20px 48px rgba(0,0,0,0.14)' : '0 4px 16px rgba(0,0,0,0.06)',
+      }}
+    >
+      {/* Image section */}
+      <div style={{ position: 'relative', height: '180px', overflow: 'hidden' }}>
+        <div style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: `url(${office.image})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          transform: hovered ? 'scale(1.06)' : 'scale(1)',
+          transition: 'transform 0.6s cubic-bezier(0.16,1,0.3,1)',
+        }} />
+        {/* Gradient */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.1) 100%)',
+        }} />
+        {/* Top accent */}
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0,
+          height: '4px', background: office.color,
+        }} />
+        {/* Flag + region code */}
+        <div style={{
+          position: 'absolute', top: '16px', left: '16px',
+          display: 'flex', alignItems: 'center', gap: '8px',
+        }}>
+          <span style={{ fontSize: '22px', filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.4))' }}>{office.flag}</span>
+          <div style={{
+            background: office.color, color: '#fff',
+            fontSize: '10px', fontWeight: '800',
+            padding: '3px 10px', borderRadius: '999px',
+            letterSpacing: '2px', textTransform: 'uppercase',
+            fontFamily: 'Poppins, sans-serif',
+          }}>{office.code}</div>
+        </div>
+        {/* Office name on image */}
+        <div style={{ position: 'absolute', bottom: '16px', left: '16px', right: '16px' }}>
+          <div style={{ fontFamily: 'Poppins, sans-serif', fontWeight: '800', fontSize: '18px', color: '#fff', lineHeight: 1.1 }}>
+            {office.region}
+          </div>
+          <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: '11px', color: 'rgba(255,255,255,0.7)', marginTop: '3px' }}>
+            {office.tagline}
+          </div>
+        </div>
+      </div>
+
+      {/* Info section */}
+      <div style={{ padding: '24px' }}>
+        {[
+          { Icon: MapPin, text: office.address, href: null },
+          { Icon: Phone,  text: office.phone,   href: `tel:${office.phone.replace(/\s/g, '')}` },
+          { Icon: Mail,   text: office.email,   href: `mailto:${office.email}` },
+          { Icon: Clock,  text: office.hours,   href: null },
+        ].map(({ Icon, text, href }) => (
+          <div key={text} style={{ display: 'flex', gap: '12px', marginBottom: '14px', alignItems: 'flex-start' }}>
+            <div style={{
+              width: '32px', height: '32px', borderRadius: '8px',
+              background: `${office.color}14`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+            }}>
+              <Icon size={14} color={office.color} />
+            </div>
+            {href
+              ? <a href={href} style={{
+                  fontFamily: 'Poppins, sans-serif', fontSize: '13.5px',
+                  color: '#4b5563', textDecoration: 'none',
+                  lineHeight: '1.5', marginTop: '7px',
+                  transition: 'color 0.2s',
+                }}
+                  onMouseEnter={e => e.currentTarget.style.color = office.color}
+                  onMouseLeave={e => e.currentTarget.style.color = '#4b5563'}
+                >{text}</a>
+              : <span style={{
+                  fontFamily: 'Poppins, sans-serif', fontSize: '13.5px',
+                  color: '#4b5563', lineHeight: '1.5', marginTop: '7px',
+                }}>{text}</span>
+            }
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const Contact = () => {
   const [form, setForm]             = useState({ name: '', email: '', phone: '', company: '', subject: '', message: '' });
   const [errors, setErrors]         = useState({});
@@ -125,7 +236,6 @@ const Contact = () => {
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); return; }
 
-    // Build mailto link with all form data
     const subject = encodeURIComponent(`[Website Enquiry] ${form.subject} — ${form.name}`);
     const body = encodeURIComponent(
 `Name: ${form.name}
@@ -148,7 +258,7 @@ Sent from Timeline Telematics website`
   return (
     <section id="contact" style={{ background: '#fff' }}>
 
-      {/* Hero */}
+      {/* ── HERO ── */}
       <div style={{
         background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
         padding: '72px 24px', position: 'relative', overflow: 'hidden',
@@ -180,11 +290,11 @@ Sent from Timeline Telematics website`
         </div>
       </div>
 
-      {/* Main */}
+      {/* ── FORM + SIDEBAR ── */}
       <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '80px 24px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.6fr', gap: '56px', alignItems: 'start' }} className="contact-grid">
 
-          {/* Left */}
+          {/* Left sidebar */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
             <FadeIn>
               <div>
@@ -200,7 +310,7 @@ Sent from Timeline Telematics website`
             <FadeIn delay={0.1}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {[
-                  { Icon: Phone, label: 'Call Us',       value: '+92 320 0002283',           href: 'tel:+923200002283' },
+                  { Icon: Phone, label: 'Call Us',       value: '+92 320 0002283',            href: 'tel:+923200002283' },
                   { Icon: Mail,  label: 'Email Us',      value: 'info@timelinetelematics.com', href: 'mailto:info@timelinetelematics.com' },
                   { Icon: Clock, label: 'Response Time', value: 'Within 24 hours',             href: null },
                 ].map(({ Icon, label, value, href }) => (
@@ -291,13 +401,13 @@ Sent from Timeline Telematics website`
                 </h3>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }} className="form-row">
-                  <Field label="Full Name"      name="name"    placeholder="John Doe"           required value={form.name}    onChange={set('name')}    error={errors.name} />
-                  <Field label="Email Address"  name="email"   placeholder="john@company.com"   required type="email" value={form.email}   onChange={set('email')}   error={errors.email} />
+                  <Field label="Full Name"     placeholder="John Doe"         required value={form.name}    onChange={set('name')}    error={errors.name} />
+                  <Field label="Email Address" placeholder="john@company.com" required type="email" value={form.email} onChange={set('email')} error={errors.email} />
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }} className="form-row">
-                  <Field label="Phone Number"   name="phone"   placeholder="+92 300 0000000"             value={form.phone}   onChange={set('phone')}   error={errors.phone} />
-                  <Field label="Company"        name="company" placeholder="Your Company"                value={form.company} onChange={set('company')} error={errors.company} />
+                  <Field label="Phone Number" placeholder="+92 300 0000000" value={form.phone}   onChange={set('phone')}   error={errors.phone} />
+                  <Field label="Company"      placeholder="Your Company"    value={form.company} onChange={set('company')} error={errors.company} />
                 </div>
 
                 {/* Subject */}
@@ -370,48 +480,49 @@ Sent from Timeline Telematics website`
         </div>
       </div>
 
-      {/* Offices */}
-      <div style={{ background: '#f9fafb', padding: '80px 24px', borderTop: '1px solid #f3f4f6' }}>
+      {/* ── OFFICES (dark section with image cards) ── */}
+      <div style={{
+        background: '#0a0a0a',
+        padding: '100px 24px',
+        borderTop: '1px solid #f3f4f6',
+      }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <FadeIn style={{ textAlign: 'center', marginBottom: '48px' }}>
-            <h2 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: '800', fontSize: 'clamp(26px, 3.5vw, 40px)', color: '#111' }}>
+          <FadeIn style={{ textAlign: 'center', marginBottom: '64px' }}>
+            <div style={{
+              display: 'inline-block',
+              background: 'rgba(232,49,42,0.15)',
+              color: '#E8312A',
+              fontSize: '10px', fontWeight: '700',
+              padding: '5px 16px', borderRadius: '999px',
+              letterSpacing: '2.5px', textTransform: 'uppercase',
+              marginBottom: '20px', fontFamily: 'Poppins, sans-serif',
+            }}>Locations</div>
+            <h2 style={{
+              fontFamily: 'Poppins, sans-serif',
+              fontWeight: '900',
+              fontSize: 'clamp(28px, 4vw, 44px)',
+              color: '#ffffff',
+              lineHeight: 1.1,
+              margin: '0 0 16px',
+            }}>
               Our <span style={{ color: '#E8312A' }}>Offices</span>
             </h2>
+            <p style={{
+              fontFamily: 'Poppins, sans-serif',
+              fontSize: '15px', color: '#94a3b8',
+              maxWidth: '440px', margin: '0 auto', lineHeight: '1.7',
+            }}>
+              Three regional offices, one unified platform — delivering local support with global standards.
+            </p>
           </FadeIn>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '24px',
+          }}>
             {OFFICES.map((office, i) => (
-              <FadeIn key={i} delay={i * 0.1}>
-                <div style={{
-                  background: '#fff', borderRadius: '16px', padding: '28px',
-                  border: '1px solid #e5e7eb', borderTop: `3px solid ${office.color}`,
-                  transition: 'all 0.3s ease',
-                }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.08)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-                    <span style={{ fontSize: '28px' }}>{office.flag}</span>
-                    <div style={{ fontFamily: 'Poppins, sans-serif', fontWeight: '800', fontSize: '16px', color: '#111' }}>{office.region}</div>
-                  </div>
-                  {[
-                    { Icon: MapPin, text: office.address },
-                    { Icon: Phone,  text: office.phone,  href: `tel:${office.phone.replace(/\s/g,'')}` },
-                    { Icon: Mail,   text: office.email,  href: `mailto:${office.email}` },
-                    { Icon: Clock,  text: office.hours },
-                  ].map(({ Icon, text, href }) => (
-                    <div key={text} style={{ display: 'flex', gap: '10px', marginBottom: '12px', alignItems: 'flex-start' }}>
-                      <Icon size={14} color={office.color} style={{ marginTop: '3px', flexShrink: 0 }} />
-                      {href
-                        ? <a href={href} style={{ fontFamily: 'Poppins, sans-serif', fontSize: '13.5px', color: '#4b5563', textDecoration: 'none' }}
-                            onMouseEnter={e => e.currentTarget.style.color = office.color}
-                            onMouseLeave={e => e.currentTarget.style.color = '#4b5563'}
-                          >{text}</a>
-                        : <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '13.5px', color: '#4b5563' }}>{text}</span>
-                      }
-                    </div>
-                  ))}
-                </div>
-              </FadeIn>
+              <OfficeCard key={office.code} office={office} index={i} />
             ))}
           </div>
         </div>

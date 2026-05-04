@@ -17,20 +17,18 @@ const VALUES = [
   { icon: Heart, title: 'Integrity', desc: 'Transparent pricing, honest reporting, and data privacy you can trust.' },
 ];
 
-
 const STATS = [
-  { value: '12+', label: 'Years in Business' },
-  { value: '25K+', label: 'Active Fleets' },
-  { value: '3', label: 'Global Regions' },
-  { value: '200+', label: 'Team Members' },
+  { value: '12+', label: 'Years in Business', sub: 'Established 2012' },
+  { value: '25K+', label: 'Active Fleets', sub: 'Globally managed' },
+  { value: '3', label: 'Global Regions', sub: 'PK · UAE · Europe' },
+  { value: '200+', label: 'Team Members', sub: 'Across 3 continents' },
 ];
 
-// Simple intersection observer hook for scroll animations
 const useVisible = () => {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold: 0.15 });
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold: 0.12 });
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
   }, []);
@@ -42,8 +40,8 @@ const FadeIn = ({ children, delay = 0, style = {} }) => {
   return (
     <div ref={ref} style={{
       opacity: visible ? 1 : 0,
-      transform: visible ? 'translateY(0)' : 'translateY(24px)',
-      transition: `all 0.7s cubic-bezier(0.16,1,0.3,1) ${delay}s`,
+      transform: visible ? 'translateY(0)' : 'translateY(28px)',
+      transition: `all 0.75s cubic-bezier(0.16,1,0.3,1) ${delay}s`,
       ...style,
     }}>
       {children}
@@ -53,56 +51,152 @@ const FadeIn = ({ children, delay = 0, style = {} }) => {
 
 const About = () => {
   return (
-    <section id="about" style={{ background: '#fff' }}>
+    <section id="about" style={{ background: '#fff', fontFamily: 'Poppins, sans-serif' }}>
 
-      {/* ── HERO BANNER ── */}
+      {/* ── HERO SPLIT (2 columns) ── */}
       <div style={{
-        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
-        padding: '80px 24px',
-        position: 'relative', overflow: 'hidden',
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
       }}>
+        {/* LEFT — Dark brand panel */}
         <div style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: 'radial-gradient(circle, rgba(232,49,42,0.12) 1px, transparent 1px)',
-          backgroundSize: '30px 30px',
-        }} />
-        <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1 }}>
-          <div style={{
-            display: 'inline-block', background: 'rgba(232,49,42,0.15)',
-            color: '#fca5a5', fontSize: '11px', fontWeight: '700',
-            padding: '4px 14px', borderRadius: '999px',
-            letterSpacing: '1.5px', textTransform: 'uppercase',
-            marginBottom: '20px', fontFamily: 'Poppins, sans-serif',
-          }}>About Us</div>
-          <h1 style={{
-            fontFamily: 'Poppins, sans-serif', fontWeight: '800',
-            fontSize: 'clamp(32px, 5vw, 56px)', color: '#fff',
-            lineHeight: 1.1, marginBottom: '20px',
-          }}>
-            Moving the World.<br />
-            <span style={{ color: '#E8312A' }}>Smarter Every Day.</span>
-          </h1>
-          <p style={{
-            color: '#94a3b8', fontSize: '17px', lineHeight: '1.75',
-            fontFamily: 'Poppins, sans-serif',
-          }}>
-            Since 2012, Timeline Telematics has been the trusted partner for fleet operators who demand visibility, safety, and control — from Karachi to Dubai to Frankfurt.
-          </p>
-        </div>
-      </div>
-
-      {/* ── STATS BAR ── */}
-      <div style={{ background: '#fafafa', borderBottom: '1px solid #f3f4f6', padding: '32px 24px' }}>
-        <div style={{
-          maxWidth: '1100px', margin: '0 auto',
-          display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px',
+          background: '#0a0a0a',
+          padding: '80px 64px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          position: 'relative',
+          overflow: 'hidden',
+          minHeight: '460px',
         }}>
-          {STATS.map((s, i) => (
-            <FadeIn key={i} delay={i * 0.08} style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 'clamp(32px, 4vw, 48px)', fontWeight: '900', color: '#E8312A', fontFamily: 'Poppins, sans-serif', lineHeight: 1 }}>{s.value}</div>
-              <div style={{ fontSize: '12px', fontWeight: '600', color: '#9ca3af', letterSpacing: '1.5px', textTransform: 'uppercase', marginTop: '6px', fontFamily: 'Poppins, sans-serif' }}>{s.label}</div>
-            </FadeIn>
-          ))}
+          {/* Decorative rings */}
+          <div style={{
+            position: 'absolute', top: '-70px', right: '-70px',
+            width: '260px', height: '260px', borderRadius: '50%',
+            border: '1px solid rgba(232,49,42,0.18)',
+            pointerEvents: 'none',
+          }} />
+          <div style={{
+            position: 'absolute', top: '-30px', right: '-30px',
+            width: '160px', height: '160px', borderRadius: '50%',
+            border: '1px solid rgba(232,49,42,0.1)',
+            pointerEvents: 'none',
+          }} />
+          <div style={{
+            position: 'absolute', bottom: '-50px', left: '-50px',
+            width: '180px', height: '180px', borderRadius: '50%',
+            border: '1px solid rgba(232,49,42,0.12)',
+            pointerEvents: 'none',
+          }} />
+
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <div style={{
+              display: 'inline-block',
+              background: 'rgba(232,49,42,0.18)',
+              color: '#E8312A',
+              fontSize: '10px', fontWeight: '700',
+              padding: '5px 16px', borderRadius: '999px',
+              letterSpacing: '2.5px', textTransform: 'uppercase',
+              marginBottom: '28px',
+            }}>About Us</div>
+
+            <h1 style={{
+              fontWeight: '900',
+              fontSize: 'clamp(30px, 3.5vw, 48px)',
+              color: '#ffffff',
+              lineHeight: 1.08,
+              margin: '0 0 24px',
+            }}>
+              Moving the World.<br />
+              <span style={{ color: '#E8312A' }}>Smarter Every Day.</span>
+            </h1>
+
+            <p style={{
+              fontSize: '14.5px',
+              color: '#94a3b8',
+              lineHeight: '1.85',
+              margin: '0 0 40px',
+              maxWidth: '400px',
+            }}>
+              Since 2012, Timeline Telematics has been the trusted partner for fleet operators
+              who demand visibility, safety, and control — from Karachi to Dubai to Frankfurt.
+            </p>
+
+            {/* Red accent bar */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '40px', height: '3px', background: '#E8312A', borderRadius: '2px' }} />
+              <span style={{ fontSize: '12px', color: '#4b5563', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: '600' }}>Est. 2012 · Karachi, Pakistan</span>
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT — Stats panel */}
+        <div style={{
+          background: '#f8f8f8',
+          padding: '80px 64px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          borderLeft: '1px solid #f0f0f0',
+        }}>
+          <p style={{
+            fontSize: '10px', fontWeight: '700',
+            color: '#9ca3af', letterSpacing: '2.5px',
+            textTransform: 'uppercase', marginBottom: '28px',
+          }}>By the Numbers</p>
+
+          {/* Stats grid with dividing lines */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '1px',
+            background: '#e5e7eb',
+            border: '1px solid #e5e7eb',
+            borderRadius: '20px',
+            overflow: 'hidden',
+          }}>
+            {STATS.map((s, i) => (
+              <div key={i} style={{
+                background: '#ffffff',
+                padding: '32px 28px',
+                transition: 'background 0.2s',
+              }}
+                onMouseEnter={e => e.currentTarget.style.background = '#fef9f9'}
+                onMouseLeave={e => e.currentTarget.style.background = '#ffffff'}
+              >
+                <div style={{
+                  fontSize: 'clamp(32px, 3.5vw, 46px)',
+                  fontWeight: '900',
+                  color: '#E8312A',
+                  lineHeight: 1,
+                }}>{s.value}</div>
+                <div style={{
+                  fontSize: '10px', fontWeight: '700',
+                  color: '#9ca3af', letterSpacing: '1.5px',
+                  textTransform: 'uppercase', marginTop: '8px',
+                }}>{s.label}</div>
+                <div style={{
+                  fontSize: '12px', color: '#6b7280', marginTop: '4px',
+                }}>{s.sub}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Live indicator */}
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '10px',
+            marginTop: '20px', paddingTop: '20px',
+            borderTop: '1px solid #e5e7eb',
+          }}>
+            <div style={{
+              width: '8px', height: '8px', borderRadius: '50%',
+              background: '#22c55e', flexShrink: 0,
+              boxShadow: '0 0 0 3px rgba(34,197,94,0.2)',
+            }} />
+            <span style={{ fontSize: '12px', color: '#6b7280' }}>
+              99.9% uptime · 50M+ data points processed daily
+            </span>
+          </div>
         </div>
       </div>
 
@@ -111,8 +205,11 @@ const About = () => {
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
           <FadeIn>
             <div style={{
-              display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '64px', alignItems: 'start',
-            }} className="ceo-grid">
+              display: 'grid',
+              gridTemplateColumns: '1fr 2fr',
+              gap: '64px',
+              alignItems: 'start',
+            }}>
 
               {/* CEO Photo */}
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
@@ -120,7 +217,7 @@ const About = () => {
                   <div style={{
                     width: '220px', height: '260px', borderRadius: '20px',
                     overflow: 'hidden', position: 'relative',
-                    boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+                    boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
                   }}>
                     <img
                       src="/M,AhsanNaeem.jpg"
@@ -128,35 +225,32 @@ const About = () => {
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
                     />
-                    {/* Fallback */}
                     <div style={{
                       display: 'none', width: '100%', height: '100%',
                       background: 'linear-gradient(135deg, #E8312A, #c72a23)',
                       alignItems: 'center', justifyContent: 'center',
                       fontSize: '56px', fontWeight: '800', color: '#fff',
-                      fontFamily: 'Poppins, sans-serif',
-                    }}>CEO</div>
+                    }}>AN</div>
                   </div>
-                  {/* Red accent */}
                   <div style={{
-                    position: 'absolute', bottom: '-10px', right: '-10px',
-                    width: '60px', height: '60px', borderRadius: '14px',
+                    position: 'absolute', bottom: '-12px', right: '-12px',
+                    width: '56px', height: '56px', borderRadius: '14px',
                     background: '#E8312A',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 8px 24px rgba(232,49,42,0.3)',
                   }}>
-                    <Award size={28} color="#fff" />
+                    <Award size={26} color="#fff" />
                   </div>
                 </div>
 
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontFamily: 'Poppins, sans-serif', fontWeight: '800', fontSize: '18px', color: '#111' }}>
-                    {/* Replace with actual CEO name */}
+                  <div style={{ fontWeight: '800', fontSize: '18px', color: '#111' }}>
                     Muhammad Ahsan Naeem
                   </div>
-                  <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: '13px', color: '#E8312A', fontWeight: '600', marginTop: '4px' }}>
+                  <div style={{ fontSize: '13px', color: '#E8312A', fontWeight: '600', marginTop: '4px' }}>
                     Founder & Chief Executive Officer
                   </div>
-                  <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: '12px', color: '#9ca3af', marginTop: '4px' }}>
+                  <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '4px' }}>
                     Timeline Telematics
                   </div>
                 </div>
@@ -166,22 +260,29 @@ const About = () => {
               <div>
                 <div style={{
                   display: 'inline-block', background: '#fef2f2', color: '#E8312A',
-                  fontSize: '11px', fontWeight: '700', padding: '4px 14px',
-                  borderRadius: '999px', letterSpacing: '1.5px', textTransform: 'uppercase',
-                  marginBottom: '20px', fontFamily: 'Poppins, sans-serif',
+                  fontSize: '10px', fontWeight: '700', padding: '5px 14px',
+                  borderRadius: '999px', letterSpacing: '2px', textTransform: 'uppercase',
+                  marginBottom: '20px',
                 }}>Message from the CEO</div>
 
                 <h2 style={{
-                  fontFamily: 'Poppins, sans-serif', fontWeight: '800',
-                  fontSize: 'clamp(24px, 3vw, 36px)', color: '#111',
-                  lineHeight: 1.2, marginBottom: '28px',
+                  fontWeight: '800',
+                  fontSize: 'clamp(22px, 3vw, 34px)',
+                  color: '#111',
+                  lineHeight: 1.2,
+                  marginBottom: '32px',
                 }}>
                   "We started with a simple belief:<br />
                   <span style={{ color: '#E8312A' }}>every fleet deserves to be smarter."</span>
                 </h2>
 
-                <div style={{ position: 'relative', paddingLeft: '24px', borderLeft: '3px solid #E8312A', marginBottom: '24px' }}>
-                  <Quote size={20} color="#fca5a5" style={{ position: 'absolute', top: 0, left: '-11px', background: '#fff' }} />
+                <div style={{
+                  paddingLeft: '24px',
+                  borderLeft: '3px solid #E8312A',
+                  marginBottom: '28px',
+                  position: 'relative',
+                }}>
+                  <Quote size={18} color="#fca5a5" style={{ position: 'absolute', top: 0, left: '-10px', background: '#fff' }} />
                 </div>
 
                 {[
@@ -191,38 +292,36 @@ const About = () => {
                   "Thank you to every customer, partner, and team member who made this journey possible.",
                 ].map((para, i) => (
                   <p key={i} style={{
-                    fontFamily: 'Poppins, sans-serif', fontSize: '15.5px', color: '#4b5563',
-                    lineHeight: '1.8', marginBottom: '16px',
+                    fontSize: '15.5px', color: '#4b5563',
+                    lineHeight: '1.85', marginBottom: '18px',
                   }}>{para}</p>
                 ))}
-
               </div>
             </div>
           </FadeIn>
         </div>
       </div>
 
-      {/* ── COMPANY STORY / TIMELINE ── */}
+      {/* ── TIMELINE ── */}
       <div style={{ background: '#f9fafb', padding: '100px 24px' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
           <FadeIn style={{ textAlign: 'center', marginBottom: '64px' }}>
             <div style={{
               display: 'inline-block', background: '#fef2f2', color: '#E8312A',
-              fontSize: '11px', fontWeight: '700', padding: '4px 14px',
-              borderRadius: '999px', letterSpacing: '1.5px', textTransform: 'uppercase',
-              marginBottom: '16px', fontFamily: 'Poppins, sans-serif',
+              fontSize: '10px', fontWeight: '700', padding: '5px 14px',
+              borderRadius: '999px', letterSpacing: '2px', textTransform: 'uppercase',
+              marginBottom: '16px',
             }}>Our Journey</div>
             <h2 style={{
-              fontFamily: 'Poppins, sans-serif', fontWeight: '800',
-              fontSize: 'clamp(28px, 4vw, 44px)', color: '#111', lineHeight: 1.15,
+              fontWeight: '800',
+              fontSize: 'clamp(28px, 4vw, 44px)',
+              color: '#111', lineHeight: 1.15,
             }}>
               12 Years of <span style={{ color: '#E8312A' }}>Building Trust</span>
             </h2>
           </FadeIn>
 
-          {/* Timeline */}
           <div style={{ position: 'relative' }}>
-            {/* Center line */}
             <div style={{
               position: 'absolute', left: '50%', top: 0, bottom: 0,
               width: '2px', background: '#e5e7eb', transform: 'translateX(-50%)',
@@ -233,9 +332,9 @@ const About = () => {
                 <div style={{
                   display: 'flex',
                   justifyContent: i % 2 === 0 ? 'flex-start' : 'flex-end',
-                  marginBottom: '40px', position: 'relative',
-                }} className="timeline-item">
-                  {/* Dot */}
+                  marginBottom: '40px',
+                  position: 'relative',
+                }}>
                   <div style={{
                     position: 'absolute', left: '50%', top: '24px',
                     width: '14px', height: '14px', borderRadius: '50%',
@@ -250,24 +349,21 @@ const About = () => {
                     background: '#fff', borderRadius: '16px',
                     padding: '24px 28px',
                     border: '1px solid #e5e7eb',
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
-                    marginLeft: i % 2 === 0 ? 0 : 'auto',
-                    marginRight: i % 2 === 0 ? 'auto' : 0,
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
                   }}>
                     <div style={{
                       display: 'inline-block',
                       background: '#E8312A', color: '#fff',
-                      fontFamily: 'Poppins, sans-serif', fontWeight: '800',
-                      fontSize: '13px', padding: '3px 12px', borderRadius: '999px',
+                      fontWeight: '800', fontSize: '12px',
+                      padding: '3px 12px', borderRadius: '999px',
                       marginBottom: '10px',
                     }}>{item.year}</div>
                     <h3 style={{
-                      fontFamily: 'Poppins, sans-serif', fontWeight: '700',
-                      fontSize: '17px', color: '#111', marginBottom: '8px',
+                      fontWeight: '700', fontSize: '17px',
+                      color: '#111', marginBottom: '8px',
                     }}>{item.title}</h3>
                     <p style={{
-                      fontFamily: 'Poppins, sans-serif', fontSize: '14px',
-                      color: '#6b7280', lineHeight: '1.65',
+                      fontSize: '14px', color: '#6b7280', lineHeight: '1.65',
                     }}>{item.desc}</p>
                   </div>
                 </div>
@@ -283,38 +379,60 @@ const About = () => {
           <FadeIn style={{ textAlign: 'center', marginBottom: '56px' }}>
             <div style={{
               display: 'inline-block', background: '#fef2f2', color: '#E8312A',
-              fontSize: '11px', fontWeight: '700', padding: '4px 14px',
-              borderRadius: '999px', letterSpacing: '1.5px', textTransform: 'uppercase',
-              marginBottom: '16px', fontFamily: 'Poppins, sans-serif',
+              fontSize: '10px', fontWeight: '700', padding: '5px 14px',
+              borderRadius: '999px', letterSpacing: '2px', textTransform: 'uppercase',
+              marginBottom: '16px',
             }}>Our Values</div>
             <h2 style={{
-              fontFamily: 'Poppins, sans-serif', fontWeight: '800',
-              fontSize: 'clamp(28px, 4vw, 44px)', color: '#111',
+              fontWeight: '800',
+              fontSize: 'clamp(28px, 4vw, 44px)',
+              color: '#111',
             }}>
               What Drives <span style={{ color: '#E8312A' }}>Us</span>
             </h2>
           </FadeIn>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px' }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gap: '24px',
+          }}>
             {VALUES.map((v, i) => (
               <FadeIn key={i} delay={i * 0.1}>
                 <div style={{
-                  padding: '32px', borderRadius: '16px',
-                  border: '1px solid #e5e7eb', background: '#fff',
-                  transition: 'all 0.3s ease', cursor: 'default',
+                  padding: '32px',
+                  borderRadius: '16px',
+                  border: '1px solid #e5e7eb',
+                  background: '#fff',
+                  transition: 'all 0.3s ease',
+                  cursor: 'default',
                 }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#fca5a5'; e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(232,49,42,0.1)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = '#fca5a5';
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 12px 32px rgba(232,49,42,0.08)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = '#e5e7eb';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
                 >
                   <div style={{
                     width: '48px', height: '48px', borderRadius: '12px',
-                    background: '#fef2f2', display: 'flex', alignItems: 'center',
-                    justifyContent: 'center', marginBottom: '20px',
+                    background: '#fef2f2',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    marginBottom: '20px',
                   }}>
                     <v.icon size={22} color="#E8312A" />
                   </div>
-                  <h3 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: '700', fontSize: '17px', color: '#111', marginBottom: '10px' }}>{v.title}</h3>
-                  <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: '14px', color: '#6b7280', lineHeight: '1.65' }}>{v.desc}</p>
+                  <h3 style={{
+                    fontWeight: '700', fontSize: '17px',
+                    color: '#111', marginBottom: '10px',
+                  }}>{v.title}</h3>
+                  <p style={{
+                    fontSize: '14px', color: '#6b7280', lineHeight: '1.65',
+                  }}>{v.desc}</p>
                 </div>
               </FadeIn>
             ))}
@@ -322,7 +440,6 @@ const About = () => {
         </div>
       </div>
 
-      
     </section>
   );
 };

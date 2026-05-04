@@ -19,7 +19,7 @@ const Footer = () => (
         {/* Brand Column */}
         <div style={{ gridColumn: 'span 1' }}>
           <div style={{ marginBottom: '20px' }}>
-            <img src="/logo.png" alt="Timeline Telematics" style={{ height: '52px', width: 'auto' }} />
+            <img src="/TimelineLogoWhite.png" alt="Timeline Telematics" style={{ height: '122px', width: 'auto' }} />
           </div>
           <p style={{ fontSize: '14px', lineHeight: '1.7', marginBottom: '24px', color: '#64748b' }}>
             Vehicles. Assets. People. In motion, every second. Global fleet intelligence platform trusted by 25,000+ operators.

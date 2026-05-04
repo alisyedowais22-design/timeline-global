@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ArrowRight, MapPin, TrendingUp, Clock } from 'lucide-react';
 import { CASE_STUDIES_LIST } from '../data/caseStudiesData';
 
-const FILTERS = ['All', 'Pakistan', 'Middle East', 'Europe'];
+const FILTERS = ['All', 'Europe', 'Middle East', 'Pakistan'];
 
 const CaseStudies = ({ onNavigate }) => {
   const [activeFilter, setActiveFilter] = useState('All');

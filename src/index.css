@@ -3,10 +3,13 @@
   --red: #E8312A; --red-dark: #c72a23;
   --navy: #1a1a2e; --text: #1f2937;
   --text-light: #6b7280; --border: #e5e7eb;
-  --bg: #ffffff; --font: 'Poppins', sans-serif;
+  --bg: #ffffff;
+  --font: 'Poppins', sans-serif;
+  --font-heading: 'Oswald', sans-serif;
 }
 html { scroll-behavior: smooth; }
 body { font-family: var(--font); color: var(--text); background: var(--bg); line-height: 1.6; overflow-x: hidden; }
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
 a { text-decoration: none; color: inherit; }
 button { cursor: pointer; font-family: var(--font); border: none; outline: none; }
 img { max-width: 100%; }
