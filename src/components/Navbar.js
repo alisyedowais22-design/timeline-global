@@ -133,9 +133,10 @@ const Navbar = () => {
               src='/Timelinelogo.png'
               alt='Timeline Telematics'
               style={{
-                height: '74px',
-                width: 'auto',
+                height: '120px',
+                width: '300px',
                 transition: 'height 0.3s ease',
+                paddingBottom: '15px',
               }}
             />
           </a>

@@ -482,9 +482,9 @@ Sent from Timeline Telematics website`
 
       {/* ── OFFICES (dark section with image cards) ── */}
       <div style={{
-        background: '#0a0a0a',
+        background: '#fffefe',
         padding: '100px 24px',
-        borderTop: '1px solid #f3f4f6',
+        borderTop: '1px solid #ff0000',
       }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
           <FadeIn style={{ textAlign: 'center', marginBottom: '64px' }}>
@@ -501,7 +501,7 @@ Sent from Timeline Telematics website`
               fontFamily: 'Poppins, sans-serif',
               fontWeight: '900',
               fontSize: 'clamp(28px, 4vw, 44px)',
-              color: '#ffffff',
+              color: '#000000',
               lineHeight: 1.1,
               margin: '0 0 16px',
             }}>
@@ -509,7 +509,7 @@ Sent from Timeline Telematics website`
             </h2>
             <p style={{
               fontFamily: 'Poppins, sans-serif',
-              fontSize: '15px', color: '#94a3b8',
+              fontSize: '15px', color: '#767c85',
               maxWidth: '440px', margin: '0 auto', lineHeight: '1.7',
             }}>
               Three regional offices, one unified platform — delivering local support with global standards.

@@ -2,26 +2,19 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const SLIDES = [
-  { img: '/banner00.png' },
-  { img: '/banner0.png'   },
-  // { img: '/banner3.png' },
-  // { img: '/banner4.png' },
+  { img: '/bn1.png' },
+  { img: '/bn2.png' },
 ];
 
 const Hero = () => {
   const [current, setCurrent] = useState(0);
-  const [fade, setFade]       = useState(true);
 
   const goTo = useCallback((idx) => {
-    setFade(false);
-    setTimeout(() => {
-      setCurrent(idx);
-      setFade(true);
-    }, 250);
+    setCurrent((idx + SLIDES.length) % SLIDES.length);
   }, []);
 
-  const next = useCallback(() => goTo((current + 1) % SLIDES.length), [current, goTo]);
-  const prev = useCallback(() => goTo((current - 1 + SLIDES.length) % SLIDES.length), [current, goTo]);
+  const next = useCallback(() => goTo(current + 1), [current, goTo]);
+  const prev = useCallback(() => goTo(current - 1), [current, goTo]);
 
   useEffect(() => {
     const t = setInterval(next, 5000);
@@ -38,52 +31,30 @@ const Hero = () => {
       background: '#111',
     }}>
 
-      {/* Full screen image */}
-      <img
-        key={current}
-        src={SLIDES[current].img}
-        alt=""
-        style={{
-          position: 'absolute', inset: 0,
-          width: '100%', height: '100%',
-          objectFit: 'cover', objectPosition: 'left center',
-          opacity: fade ? 1 : 0,
-          transition: 'opacity 0.35s ease',
-          display: 'block',
-        }}
-      />
+      {/* All slides stacked — CSS opacity crossfade, no remount */}
+      {SLIDES.map((slide, i) => (
+        <img
+          key={slide.img}
+          src={slide.img}
+          alt=""
+          style={{
+            position: 'absolute', inset: 0,
+            width: '100%', height: '100%',
+            objectFit: 'fill',
+            opacity: i === current ? 1 : 0,
+            transition: 'opacity 0.5s ease',
+            willChange: 'opacity',
+          }}
+        />
+      ))}
 
-      {/* Prev arrow */}
-      <button onClick={prev} style={{
-        position: 'absolute', left: '24px', top: '50%',
-        transform: 'translateY(-50%)',
-        width: '48px', height: '48px', borderRadius: '50%',
-        background: 'rgba(0,0,0,0.35)',
-        border: '1px solid rgba(255,255,255,0.25)',
-        color: '#fff', cursor: 'pointer',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        zIndex: 10, transition: 'background 0.2s',
-      }}
-        onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.65)'}
-        onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.35)'}
-      >
+      {/* Prev */}
+      <button onClick={prev} style={arrowStyle('left')}>
         <ChevronLeft size={22} />
       </button>
 
-      {/* Next arrow */}
-      <button onClick={next} style={{
-        position: 'absolute', right: '24px', top: '50%',
-        transform: 'translateY(-50%)',
-        width: '48px', height: '48px', borderRadius: '50%',
-        background: 'rgba(0,0,0,0.35)',
-        border: '1px solid rgba(255,255,255,0.25)',
-        color: '#fff', cursor: 'pointer',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        zIndex: 10, transition: 'background 0.2s',
-      }}
-        onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.65)'}
-        onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.35)'}
-      >
+      {/* Next */}
+      <button onClick={next} style={arrowStyle('right')}>
         <ChevronRight size={22} />
       </button>
 
@@ -107,5 +78,18 @@ const Hero = () => {
     </section>
   );
 };
+
+const arrowStyle = (side) => ({
+  position: 'absolute',
+  [side]: '24px',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  width: '48px', height: '48px', borderRadius: '50%',
+  background: 'rgba(0,0,0,0.35)',
+  border: '1px solid rgba(255,255,255,0.25)',
+  color: '#fff', cursor: 'pointer',
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  zIndex: 10, transition: 'background 0.2s',
+});
 
 export default Hero;

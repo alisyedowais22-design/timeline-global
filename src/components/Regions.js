@@ -203,7 +203,7 @@ const Regions = () => {
   return (
     <section id="regions" style={{
       padding: '100px 24px',
-      background: '#0a0a0a',
+      background: '#0f172a',
       fontFamily: 'Poppins, sans-serif',
     }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>

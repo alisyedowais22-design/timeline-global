@@ -1,445 +1,380 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Quote, Award, Users, Globe, TrendingUp, Shield, Zap, Heart } from 'lucide-react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+
+const RED = '#C8102E';
+const NAVY = '#08142E';
+const P = "'Poppins', sans-serif";
 
 const TIMELINE = [
-  { year: '2012', title: 'Founded', desc: 'Timeline Telematics was established in Karachi with a vision to modernize fleet management across Pakistan.' },
-  { year: '2015', title: 'First 1,000 Fleets', desc: 'Reached a major milestone of 1,000 active fleet customers across Pakistan\'s key industrial sectors.' },
-  { year: '2018', title: 'Gulf Expansion', desc: 'Launched operations in UAE and Gulf region, serving logistics and transport operators across the Middle East.' },
-  { year: '2021', title: 'Europe Entry', desc: 'Expanded into European markets, bringing our platform to cross-border logistics operators across 12 countries.' },
-  { year: '2023', title: '25,000+ Fleets', desc: 'Crossed the milestone of 25,000+ active fleet operators globally with 50M+ data points processed daily.' },
-  { year: '2024', title: 'AI Platform Launch', desc: 'Launched next-generation AI-powered predictive analytics and intelligent routing for enterprise fleets.' },
+  { year: '2012', label: 'Founded',       title: 'The Beginning',               desc: 'Timeline Telematics was founded in Karachi. First 12 vehicles tracked. Platform built from scratch by our local engineering team with a single conviction: every Pakistani fleet operator deserves enterprise-grade GPS tracking.' },
+  { year: '2015', label: 'Milestone',     title: 'First 1,000 Fleet Customers',  desc: 'Deep customer research phase — riding routes, visiting depots, interviewing 500+ drivers. Launched specialized fuel monitoring and passenger transport modules. 1,000 active fleet customers reached.' },
+  { year: '2018', label: 'Gulf Expansion',title: 'UAE & Gulf Launch',            desc: 'Dubai office opened. Arabic language support and UAE RTA integration launched. Hardware certified for Gulf heat extremes (−40°C to +85°C). First enterprise contracts with major Gulf logistics operators.' },
+  { year: '2021', label: 'Europe',        title: 'European Market Entry',        desc: 'Frankfurt office established. EU tachograph compliance, Working Time Directive, and full GDPR infrastructure built. Now serving cross-border logistics operators across 12 European countries.' },
+  { year: '2023', label: 'Scale',         title: '25,000+ Fleets Milestone',     desc: '25,000+ active fleet operators globally. 50M+ daily data points. Forbes Middle East recognition. Three continental offices fully operational with local language support and regulatory expertise.' },
+  { year: '2024', label: 'AI Era',        title: 'AI-Native Platform Launch',    desc: 'Next-generation AI platform: predictive breakdown detection, intelligent driver coaching, natural language reporting. ML models trained on 1B+ km of real road data.' },
 ];
 
+// Clean inline SVG icons — no emoji, renders everywhere
+const IconShield = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={RED} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+  </svg>
+);
+const IconBulb = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={RED} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="9" y1="18" x2="15" y2="18"/>
+    <line x1="10" y1="22" x2="14" y2="22"/>
+    <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0018 8 6 6 0 006 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 018.91 14"/>
+  </svg>
+);
+const IconUsers = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={RED} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+    <circle cx="9" cy="7" r="4"/>
+    <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+    <path d="M16 3.13a4 4 0 010 7.75"/>
+  </svg>
+);
+const IconHeart = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={RED} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+  </svg>
+);
+
 const VALUES = [
-  { icon: Shield, title: 'Reliability', desc: '99.9% uptime guarantee. Your fleet never sleeps, and neither does our platform.' },
-  { icon: Zap, title: 'Innovation', desc: 'We push the boundaries of telematics — from AI routing to predictive maintenance.' },
-  { icon: Users, title: 'Customer First', desc: 'Every feature we build starts with a real customer problem. Your success is our success.' },
-  { icon: Heart, title: 'Integrity', desc: 'Transparent pricing, honest reporting, and data privacy you can trust.' },
+  { Icon: IconShield, title: 'Reliability',    desc: '99.9% uptime. Redundant infrastructure. 24/7 operations team. When your driver needs support at 2am, we are there.' },
+  { Icon: IconBulb,   title: 'Innovation',     desc: 'Proprietary AI models trained on 1 billion+ km of real road data. We invest in R&D to keep our customers ahead of the market.' },
+  { Icon: IconUsers,  title: 'Customer First', desc: 'Every feature we build starts with a real customer problem. Open product roadmap. Monthly on-site visits by our product team.' },
+  { Icon: IconHeart,  title: 'Integrity',      desc: 'We never sell customer data. Transparent pricing. No hidden charges. When we make a mistake, we own it and fix it.' },
+];
+
+const TICKER_ITEMS = [
+  '25,000+ Active Fleets', 'GPS Fleet Management', 'Pakistan · UAE · Europe',
+  '99.9% Uptime SLA', '30% Fuel Cost Reduction', 'Founded 2012 · Karachi',
+  '50M+ Daily Data Points', 'AI-Powered Telematics',
 ];
 
 const STATS = [
-  { value: '12+', label: 'Years in Business', sub: 'Established 2012' },
-  { value: '25K+', label: 'Active Fleets', sub: 'Globally managed' },
-  { value: '3', label: 'Global Regions', sub: 'PK · UAE · Europe' },
-  { value: '200+', label: 'Team Members', sub: 'Across 3 continents' },
+  { body: '12',  accent: '+', name: 'Years in Business',     hint: 'Established in Karachi, 2012' },
+  { body: '25K', accent: '+', name: 'Active Fleet Operators', hint: 'Globally managed, 3 continents' },
+  { body: '50M', accent: '+', name: 'Data Points Daily',      hint: 'Real-time processing capacity' },
+  { body: '200', accent: '+', name: 'Team Members',           hint: 'Engineers & logistics specialists' },
 ];
 
-const useVisible = () => {
+// ── Intersection Observer ──
+const useReveal = (threshold = 0.12) => {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold: 0.12 });
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold });
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
   }, []);
   return [ref, visible];
 };
 
-const FadeIn = ({ children, delay = 0, style = {} }) => {
-  const [ref, visible] = useVisible();
+const Reveal = ({ children, direction = 'up', delay = 0, style = {} }) => {
+  const [ref, visible] = useReveal();
+  const T = { up: 'translateY(32px)', left: 'translateX(-32px)', right: 'translateX(32px)' };
   return (
-    <div ref={ref} style={{
-      opacity: visible ? 1 : 0,
-      transform: visible ? 'translateY(0)' : 'translateY(28px)',
-      transition: `all 0.75s cubic-bezier(0.16,1,0.3,1) ${delay}s`,
-      ...style,
-    }}>
+    <div ref={ref} style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : T[direction], transition: `opacity 0.7s cubic-bezier(0.16,1,0.3,1) ${delay}s, transform 0.7s cubic-bezier(0.16,1,0.3,1) ${delay}s`, ...style }}>
       {children}
     </div>
   );
 };
 
-const About = () => {
-  return (
-    <section id="about" style={{ background: '#fff', fontFamily: 'Poppins, sans-serif' }}>
+const Eyebrow = ({ children, light = false }) => (
+  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '10px', fontWeight: 700, letterSpacing: '3px', textTransform: 'uppercase', color: light ? 'rgba(200,16,46,0.9)' : RED, marginBottom: '16px', fontFamily: P }}>
+    <span style={{ display: 'inline-block', width: '24px', height: '2px', background: RED }} />
+    {children}
+  </div>
+);
 
-      {/* ── HERO SPLIT (2 columns) ── */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-      }}>
-        {/* LEFT — Dark brand panel */}
-        <div style={{
-          background: '#0a0a0a',
-          padding: '80px 64px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          position: 'relative',
-          overflow: 'hidden',
-          minHeight: '460px',
-        }}>
-          {/* Decorative rings */}
-          <div style={{
-            position: 'absolute', top: '-70px', right: '-70px',
-            width: '260px', height: '260px', borderRadius: '50%',
-            border: '1px solid rgba(232,49,42,0.18)',
-            pointerEvents: 'none',
-          }} />
-          <div style={{
-            position: 'absolute', top: '-30px', right: '-30px',
-            width: '160px', height: '160px', borderRadius: '50%',
-            border: '1px solid rgba(232,49,42,0.1)',
-            pointerEvents: 'none',
-          }} />
-          <div style={{
-            position: 'absolute', bottom: '-50px', left: '-50px',
-            width: '180px', height: '180px', borderRadius: '50%',
-            border: '1px solid rgba(232,49,42,0.12)',
-            pointerEvents: 'none',
-          }} />
+// ── TICKER ──
+const Ticker = () => (
+  <div style={{ background: RED, padding: '10px 0', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', width: 'max-content', animation: 'tickerMove 55s linear infinite' }}>
+      {[...TICKER_ITEMS, ...TICKER_ITEMS].map((txt, i) => (
+        <span key={i} style={{ whiteSpace: 'nowrap', fontSize: '11px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: '#fff', padding: '0 40px', fontFamily: P }}>
+          {txt}<span style={{ color: 'rgba(255,255,255,0.35)', margin: '0 8px' }}>·</span>
+        </span>
+      ))}
+    </div>
+  </div>
+);
 
-          <div style={{ position: 'relative', zIndex: 1 }}>
-            <div style={{
-              display: 'inline-block',
-              background: 'rgba(232,49,42,0.18)',
-              color: '#E8312A',
-              fontSize: '10px', fontWeight: '700',
-              padding: '5px 16px', borderRadius: '999px',
-              letterSpacing: '2.5px', textTransform: 'uppercase',
-              marginBottom: '28px',
-            }}>About Us</div>
+// ── HERO ──
+const Hero = () => (
+  <div style={{ background: NAVY }}>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '480px' }}>
 
-            <h1 style={{
-              fontWeight: '900',
-              fontSize: 'clamp(30px, 3.5vw, 48px)',
-              color: '#ffffff',
-              lineHeight: 1.08,
-              margin: '0 0 24px',
-            }}>
-              Moving the World.<br />
-              <span style={{ color: '#E8312A' }}>Smarter Every Day.</span>
-            </h1>
+      <Reveal direction="left" style={{ padding: '72px 56px', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', zIndex: 2 }}>
+        {[['-60px', '-60px', '320px'], ['-10px', '-10px', '180px']].map(([t, r, s], i) => (
+          <div key={i} style={{ position: 'absolute', top: t, right: r, width: s, height: s, borderRadius: '50%', border: `1px solid rgba(200,16,46,${i === 0 ? 0.2 : 0.1})`, pointerEvents: 'none' }} />
+        ))}
+        <div style={{ position: 'absolute', bottom: '-80px', left: '-40px', width: '240px', height: '240px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.04)', pointerEvents: 'none' }} />
+        <div style={{ position: 'relative', zIndex: 2 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '10px', fontWeight: 700, letterSpacing: '3px', textTransform: 'uppercase', color: RED, background: 'rgba(200,16,46,0.12)', padding: '6px 16px', borderLeft: `3px solid ${RED}`, marginBottom: '24px', fontFamily: P }}>
+            About Timeline Telematics
+          </div>
+          <h1 style={{ fontFamily: P, fontSize: 'clamp(28px,3.5vw,48px)', fontWeight: 800, color: '#fff', lineHeight: 1.1, letterSpacing: '-0.02em', margin: '0 0 20px' }}>
+            Moving the World.<br />
+            <em style={{ fontStyle: 'normal', color: RED }}>Smarter Every Day.</em>
+          </h1>
+          <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.8, maxWidth: '380px', margin: '0 0 36px', fontFamily: P, fontWeight: 400 }}>
+            Since 2012, we have been the trusted fleet management partner for operators who demand real-time GPS visibility, fuel control, driver safety, and operational intelligence — from Karachi to Dubai to Frankfurt.
+          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{ height: '1px', width: '48px', background: RED }} />
+            <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '2px', textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)', fontFamily: P }}>Est. 2012 · Karachi, Pakistan</span>
+          </div>
+        </div>
+      </Reveal>
 
-            <p style={{
-              fontSize: '14.5px',
-              color: '#94a3b8',
-              lineHeight: '1.85',
-              margin: '0 0 40px',
-              maxWidth: '400px',
-            }}>
-              Since 2012, Timeline Telematics has been the trusted partner for fleet operators
-              who demand visibility, safety, and control — from Karachi to Dubai to Frankfurt.
-            </p>
-
-            {/* Red accent bar */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ width: '40px', height: '3px', background: '#E8312A', borderRadius: '2px' }} />
-              <span style={{ fontSize: '12px', color: '#4b5563', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: '600' }}>Est. 2012 · Karachi, Pakistan</span>
+      {/* Stats — body/accent already split, no JSX conversion needed */}
+      <Reveal direction="right" style={{ background: '#0f2044', padding: '56px 48px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        {STATS.map((s, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '20px', padding: '20px 0', borderBottom: i < 3 ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>
+            <div style={{ fontFamily: P, fontSize: '40px', fontWeight: 800, color: '#fff', lineHeight: 1, minWidth: '110px', letterSpacing: '-0.02em' }}>
+              {s.body}<span style={{ color: RED }}>{s.accent}</span>
+            </div>
+            <div>
+              <div style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.8)', marginBottom: '3px', fontFamily: P }}>{s.name}</div>
+              <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)', fontFamily: P }}>{s.hint}</div>
             </div>
           </div>
+        ))}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginTop: '24px', paddingTop: '20px', borderTop: '1px solid rgba(255,255,255,0.06)', fontSize: '11px', color: 'rgba(255,255,255,0.4)', fontFamily: P }}>
+          <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#22c55e', flexShrink: 0, boxShadow: '0 0 0 3px rgba(34,197,94,0.2)' }} />
+          Platform live · 99.9% uptime SLA active
         </div>
+      </Reveal>
+    </div>
+  </div>
+);
 
-        {/* RIGHT — Stats panel */}
-        <div style={{
-          background: '#f8f8f8',
-          padding: '80px 64px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          borderLeft: '1px solid #f0f0f0',
-        }}>
-          <p style={{
-            fontSize: '10px', fontWeight: '700',
-            color: '#9ca3af', letterSpacing: '2.5px',
-            textTransform: 'uppercase', marginBottom: '28px',
-          }}>By the Numbers</p>
+// ── CEO ──
+const CEO = () => (
+  <div style={{ background: 'linear-gradient(135deg, #f8f9fc 0%, #eef1f7 100%)', padding: '100px 0', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ position: 'absolute', top: '-80px', right: '-80px', width: '400px', height: '400px', borderRadius: '50%', background: 'rgba(200,16,46,0.04)', pointerEvents: 'none' }} />
+    <div style={{ position: 'absolute', bottom: '-60px', left: '5%', width: '250px', height: '250px', borderRadius: '50%', background: 'rgba(8,20,46,0.04)', pointerEvents: 'none' }} />
 
-          {/* Stats grid with dividing lines */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '1px',
-            background: '#e5e7eb',
-            border: '1px solid #e5e7eb',
-            borderRadius: '20px',
-            overflow: 'hidden',
-          }}>
-            {STATS.map((s, i) => (
-              <div key={i} style={{
-                background: '#ffffff',
-                padding: '32px 28px',
-                transition: 'background 0.2s',
-              }}
-                onMouseEnter={e => e.currentTarget.style.background = '#fef9f9'}
-                onMouseLeave={e => e.currentTarget.style.background = '#ffffff'}
-              >
-                <div style={{
-                  fontSize: 'clamp(32px, 3.5vw, 46px)',
-                  fontWeight: '900',
-                  color: '#E8312A',
-                  lineHeight: 1,
-                }}>{s.value}</div>
-                <div style={{
-                  fontSize: '10px', fontWeight: '700',
-                  color: '#9ca3af', letterSpacing: '1.5px',
-                  textTransform: 'uppercase', marginTop: '8px',
-                }}>{s.label}</div>
-                <div style={{
-                  fontSize: '12px', color: '#6b7280', marginTop: '4px',
-                }}>{s.sub}</div>
-              </div>
-            ))}
-          </div>
+    <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 56px' }}>
+      <Reveal style={{ textAlign: 'center', marginBottom: '64px' }}>
+        <Eyebrow>Leadership</Eyebrow>
+        <h2 style={{ fontFamily: P, fontSize: 'clamp(22px,2.8vw,36px)', fontWeight: 800, color: NAVY, marginTop: '8px' }}>
+          Message from our <em style={{ fontStyle: 'normal', color: RED }}>Founder & CEO</em>
+        </h2>
+      </Reveal>
 
-          {/* Live indicator */}
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: '10px',
-            marginTop: '20px', paddingTop: '20px',
-            borderTop: '1px solid #e5e7eb',
-          }}>
-            <div style={{
-              width: '8px', height: '8px', borderRadius: '50%',
-              background: '#22c55e', flexShrink: 0,
-              boxShadow: '0 0 0 3px rgba(34,197,94,0.2)',
-            }} />
-            <span style={{ fontSize: '12px', color: '#6b7280' }}>
-              99.9% uptime · 50M+ data points processed daily
-            </span>
-          </div>
-        </div>
-      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr', gap: '72px', alignItems: 'center' }}>
 
-      {/* ── CEO MESSAGE ── */}
-      <div style={{ padding: '100px 24px', background: '#fff' }}>
-        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <FadeIn>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 2fr',
-              gap: '64px',
-              alignItems: 'start',
-            }}>
-
-              {/* CEO Photo */}
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
-                <div style={{ position: 'relative' }}>
-                  <div style={{
-                    width: '220px', height: '260px', borderRadius: '20px',
-                    overflow: 'hidden', position: 'relative',
-                    boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
-                  }}>
-                    <img
-                      src="/M,AhsanNaeem.jpg"
-                      alt="CEO"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
-                    />
-                    <div style={{
-                      display: 'none', width: '100%', height: '100%',
-                      background: 'linear-gradient(135deg, #E8312A, #c72a23)',
-                      alignItems: 'center', justifyContent: 'center',
-                      fontSize: '56px', fontWeight: '800', color: '#fff',
-                    }}>AN</div>
-                  </div>
-                  <div style={{
-                    position: 'absolute', bottom: '-12px', right: '-12px',
-                    width: '56px', height: '56px', borderRadius: '14px',
-                    background: '#E8312A',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    boxShadow: '0 8px 24px rgba(232,49,42,0.3)',
-                  }}>
-                    <Award size={26} color="#fff" />
-                  </div>
-                </div>
-
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontWeight: '800', fontSize: '18px', color: '#111' }}>
-                    Muhammad Ahsan Naeem
-                  </div>
-                  <div style={{ fontSize: '13px', color: '#E8312A', fontWeight: '600', marginTop: '4px' }}>
-                    Founder & Chief Executive Officer
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '4px' }}>
-                    Timeline Telematics
-                  </div>
-                </div>
-              </div>
-
-              {/* Message */}
-              <div>
-                <div style={{
-                  display: 'inline-block', background: '#fef2f2', color: '#E8312A',
-                  fontSize: '10px', fontWeight: '700', padding: '5px 14px',
-                  borderRadius: '999px', letterSpacing: '2px', textTransform: 'uppercase',
-                  marginBottom: '20px',
-                }}>Message from the CEO</div>
-
-                <h2 style={{
-                  fontWeight: '800',
-                  fontSize: 'clamp(22px, 3vw, 34px)',
-                  color: '#111',
-                  lineHeight: 1.2,
-                  marginBottom: '32px',
-                }}>
-                  "We started with a simple belief:<br />
-                  <span style={{ color: '#E8312A' }}>every fleet deserves to be smarter."</span>
-                </h2>
-
-                <div style={{
-                  paddingLeft: '24px',
-                  borderLeft: '3px solid #E8312A',
-                  marginBottom: '28px',
-                  position: 'relative',
-                }}>
-                  <Quote size={18} color="#fca5a5" style={{ position: 'absolute', top: 0, left: '-10px', background: '#fff' }} />
-                </div>
-
-                {[
-                  "When I founded Timeline Telematics in 2012, the fleet management industry in Pakistan was still operating on paper logs and phone calls. Drivers were invisible once they left the depot. Fuel was leaking out of every operation. Safety was an afterthought.",
-                  "I knew technology could change this — not just in Pakistan, but across the entire region. Our mission was to build a platform that was powerful enough for enterprise fleets, yet simple enough for a small business owner in Lahore or a logistics operator in Dubai.",
-                  "Today, with 25,000+ fleets trusting us globally and teams across Pakistan, UAE, and Europe, I'm proud of what we've built. But this is just the beginning. The future of fleet management is intelligent, predictive, and connected — and we're going to lead it.",
-                  "Thank you to every customer, partner, and team member who made this journey possible.",
-                ].map((para, i) => (
-                  <p key={i} style={{
-                    fontSize: '15.5px', color: '#4b5563',
-                    lineHeight: '1.85', marginBottom: '18px',
-                  }}>{para}</p>
-                ))}
-              </div>
-            </div>
-          </FadeIn>
-        </div>
-      </div>
-
-      {/* ── TIMELINE ── */}
-      <div style={{ background: '#f9fafb', padding: '100px 24px' }}>
-        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <FadeIn style={{ textAlign: 'center', marginBottom: '64px' }}>
-            <div style={{
-              display: 'inline-block', background: '#fef2f2', color: '#E8312A',
-              fontSize: '10px', fontWeight: '700', padding: '5px 14px',
-              borderRadius: '999px', letterSpacing: '2px', textTransform: 'uppercase',
-              marginBottom: '16px',
-            }}>Our Journey</div>
-            <h2 style={{
-              fontWeight: '800',
-              fontSize: 'clamp(28px, 4vw, 44px)',
-              color: '#111', lineHeight: 1.15,
-            }}>
-              12 Years of <span style={{ color: '#E8312A' }}>Building Trust</span>
-            </h2>
-          </FadeIn>
-
+        {/* Left — Photo card */}
+        <Reveal direction="left" delay={0.05}>
           <div style={{ position: 'relative' }}>
-            <div style={{
-              position: 'absolute', left: '50%', top: 0, bottom: 0,
-              width: '2px', background: '#e5e7eb', transform: 'translateX(-50%)',
-            }} />
+            <div style={{ position: 'absolute', top: '16px', left: '-16px', width: '100%', height: '100%', background: RED, zIndex: 0 }} />
+            <div style={{ position: 'relative', zIndex: 1, background: NAVY, overflow: 'hidden' }}>
+              <div style={{ position: 'relative', height: '380px', overflow: 'hidden', background: `linear-gradient(160deg,#1a2f5a,${NAVY})` }}>
+                <img
+                  src="/M,AhsanNaeem.jpg"
+                  alt="Muhammad Ahsan Naeem"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', display: 'block' }}
+                  onError={e => { e.currentTarget.style.display = 'none'; }}
+                />
+                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '80px', background: `linear-gradient(to top, ${NAVY}, transparent)` }} />
+              </div>
+              <div style={{ padding: '20px 28px 24px', borderTop: `3px solid ${RED}` }}>
+                <div style={{ fontFamily: P, fontWeight: 700, fontSize: '17px', color: '#fff', marginBottom: '4px' }}>Muhammad Ahsan Naeem</div>
+                <div style={{ fontSize: '11px', color: RED, fontWeight: 600, letterSpacing: '2px', textTransform: 'uppercase', fontFamily: P }}>Founder & CEO</div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
 
-            {TIMELINE.map((item, i) => (
-              <FadeIn key={i} delay={i * 0.1}>
-                <div style={{
-                  display: 'flex',
-                  justifyContent: i % 2 === 0 ? 'flex-start' : 'flex-end',
-                  marginBottom: '40px',
-                  position: 'relative',
-                }}>
-                  <div style={{
-                    position: 'absolute', left: '50%', top: '24px',
-                    width: '14px', height: '14px', borderRadius: '50%',
-                    background: '#E8312A', border: '3px solid #fff',
-                    transform: 'translateX(-50%)',
-                    boxShadow: '0 0 0 4px rgba(232,49,42,0.15)',
-                    zIndex: 1,
-                  }} />
+        {/* Right — Quote + Content */}
+        <Reveal direction="right" delay={0.12}>
+          <div style={{ fontFamily: 'Georgia, serif', fontSize: '100px', lineHeight: 0.8, color: RED, opacity: 0.12, marginBottom: '12px', userSelect: 'none' }}>"</div>
+          <h2 style={{ fontFamily: P, fontSize: 'clamp(17px,1.9vw,25px)', fontWeight: 700, color: NAVY, lineHeight: 1.45, marginBottom: '28px', marginTop: '-12px' }}>
+            We started with a simple belief —{' '}
+            <em style={{ fontStyle: 'normal', color: RED }}>every fleet deserves to be smarter.</em>
+          </h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {[
+              "When I founded Timeline Telematics in 2012, the fleet management industry in Pakistan was still operating on paper logs and phone calls. Drivers were invisible once they left the depot. Fuel was leaking out of every operation. Safety was an afterthought.",
+              "I knew technology could change this — not just in Pakistan, but across the entire region. Our mission was to build a platform powerful enough for enterprise fleets, yet simple enough for a small business owner in Lahore or a logistics operator in Dubai.",
+              "Today, with 25,000+ fleets trusting us globally and teams across Pakistan, UAE, and Europe, I'm proud of what we've built. But this is just the beginning — the future of fleet management is intelligent, predictive, and connected.",
+            ].map((text, i) => (
+              <p key={i} style={{ fontSize: '14px', color: '#4a5568', lineHeight: 1.85, margin: 0, fontFamily: P, fontWeight: 400 }}>{text}</p>
+            ))}
+          </div>
+          <div style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid #dde3ee', display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{ width: '36px', height: '3px', background: RED, flexShrink: 0 }} />
+            <div>
+              <div style={{ fontFamily: P, fontWeight: 700, fontSize: '14px', color: NAVY }}>Muhammad Ahsan Naeem</div>
+              <div style={{ fontFamily: P, fontSize: '11px', color: '#8892A4', letterSpacing: '1px', textTransform: 'uppercase', marginTop: '2px' }}>Founder & CEO · Timeline Telematics</div>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </div>
+  </div>
+);
 
-                  <div style={{
-                    width: '44%',
-                    background: '#fff', borderRadius: '16px',
-                    padding: '24px 28px',
-                    border: '1px solid #e5e7eb',
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
-                  }}>
-                    <div style={{
-                      display: 'inline-block',
-                      background: '#E8312A', color: '#fff',
-                      fontWeight: '800', fontSize: '12px',
-                      padding: '3px 12px', borderRadius: '999px',
-                      marginBottom: '10px',
-                    }}>{item.year}</div>
-                    <h3 style={{
-                      fontWeight: '700', fontSize: '17px',
-                      color: '#111', marginBottom: '8px',
-                    }}>{item.title}</h3>
-                    <p style={{
-                      fontSize: '14px', color: '#6b7280', lineHeight: '1.65',
-                    }}>{item.desc}</p>
-                  </div>
-                </div>
-              </FadeIn>
+// ── TIMELINE ──
+const TimelineSlider = () => {
+  const [cur, setCur] = useState(0);
+  const [autoFill, setAutoFill] = useState(false);
+
+  const goTo = useCallback((n) => {
+    setCur((n + TIMELINE.length) % TIMELINE.length);
+    setAutoFill(false);
+    setTimeout(() => setAutoFill(true), 50);
+  }, []);
+
+  useEffect(() => {
+    setAutoFill(true);
+    const t = setInterval(() => goTo(cur + 1), 5000);
+    return () => clearInterval(t);
+  }, [cur, goTo]);
+
+  return (
+    <div style={{ background: NAVY, padding: '100px 0', overflow: 'hidden' }}>
+      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 56px' }}>
+        <Reveal style={{ marginBottom: '64px' }}>
+          <Eyebrow light>Our Journey</Eyebrow>
+          <h2 style={{ fontFamily: P, fontSize: 'clamp(26px,3.2vw,42px)', fontWeight: 800, color: '#fff', lineHeight: 1.15, marginTop: '14px' }}>
+            12 Years of <em style={{ fontStyle: 'normal', color: RED }}>Building Trust</em>
+          </h2>
+        </Reveal>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            {TIMELINE.map((_, i) => (
+              <div key={i} onClick={() => goTo(i)} style={{ height: '4px', width: i === cur ? '40px' : '28px', background: i === cur ? RED : 'rgba(255,255,255,0.15)', cursor: 'pointer', transition: 'all 0.3s' }} />
+            ))}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.25)', letterSpacing: '1px', fontFamily: P }}>
+              {String(cur + 1).padStart(2, '0')} / {String(TIMELINE.length).padStart(2, '0')}
+            </span>
+            {['←', '→'].map((arrow, i) => (
+              <button key={i} onClick={() => goTo(cur + (i === 0 ? -1 : 1))} style={{ width: '40px', height: '40px', border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#fff', cursor: 'pointer', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.25s', fontFamily: P }}
+                onMouseEnter={e => { e.currentTarget.style.background = RED; e.currentTarget.style.borderColor = RED; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; }}
+              >{arrow}</button>
             ))}
           </div>
         </div>
-      </div>
 
-      {/* ── VALUES ── */}
-      <div style={{ background: '#fff', padding: '100px 24px' }}>
-        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <FadeIn style={{ textAlign: 'center', marginBottom: '56px' }}>
-            <div style={{
-              display: 'inline-block', background: '#fef2f2', color: '#E8312A',
-              fontSize: '10px', fontWeight: '700', padding: '5px 14px',
-              borderRadius: '999px', letterSpacing: '2px', textTransform: 'uppercase',
-              marginBottom: '16px',
-            }}>Our Values</div>
-            <h2 style={{
-              fontWeight: '800',
-              fontSize: 'clamp(28px, 4vw, 44px)',
-              color: '#111',
-            }}>
-              What Drives <span style={{ color: '#E8312A' }}>Us</span>
+        <div style={{ height: '2px', background: 'rgba(255,255,255,0.08)', marginBottom: '48px', overflow: 'hidden' }}>
+          <div style={{ height: '100%', background: RED, width: `${(cur + 1) / TIMELINE.length * 100}%`, transition: 'width 0.5s cubic-bezier(0.4,0,0.2,1)' }} />
+        </div>
+
+        <div key={cur} style={{ display: 'grid', gridTemplateColumns: '200px 1fr', animation: 'fadeIn 0.4s ease' }}>
+          <div style={{ background: RED, padding: '32px 24px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', overflow: 'hidden', minHeight: '160px' }}>
+            <div style={{ fontFamily: P, fontSize: '54px', fontWeight: 800, color: '#fff', lineHeight: 1, letterSpacing: '-0.03em' }}>
+              {TIMELINE[cur].year}
+            </div>
+            <div style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '3px', textTransform: 'uppercase', color: 'rgba(255,255,255,0.6)', marginTop: '8px', fontFamily: P }}>
+              {TIMELINE[cur].label}
+            </div>
+          </div>
+          <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderLeft: 'none', padding: '36px 44px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div style={{ fontFamily: P, fontSize: '18px', fontWeight: 700, color: '#fff', marginBottom: '12px' }}>{TIMELINE[cur].title}</div>
+            <p style={{ fontSize: '13.5px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.8, margin: 0, fontFamily: P, fontWeight: 400 }}>{TIMELINE[cur].desc}</p>
+          </div>
+        </div>
+
+        <div style={{ height: '2px', background: 'rgba(255,255,255,0.06)', marginTop: '24px', overflow: 'hidden' }}>
+          <div style={{ height: '100%', background: RED, width: autoFill ? '100%' : '0', transition: autoFill ? 'width 4.8s linear' : 'none' }} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ── METRICS ──
+const MetricBar = ({ label, pct, val, sub, delay }) => {
+  const [ref, visible] = useReveal();
+  return (
+    <div ref={ref} style={{ padding: '32px', border: '1px solid #E2E6ED', opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(20px)', transition: `all 0.6s cubic-bezier(0.16,1,0.3,1) ${delay}s` }}>
+      <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: '#8892A4', marginBottom: '12px', fontFamily: P }}>{label}</div>
+      <div style={{ height: '4px', background: '#E2E6ED', marginBottom: '14px', overflow: 'hidden' }}>
+        <div style={{ height: '100%', background: RED, width: visible ? pct : '0', transition: visible ? 'width 1.2s cubic-bezier(0.4,0,0.2,1) 0.3s' : 'none' }} />
+      </div>
+      <div style={{ fontFamily: P, fontSize: '34px', fontWeight: 800, color: NAVY, lineHeight: 1 }}>{val}</div>
+      <div style={{ fontSize: '12px', color: '#8892A4', marginTop: '6px', fontFamily: P }}>{sub}</div>
+    </div>
+  );
+};
+
+// ── VALUES ──
+const ValCard = ({ Icon, title, desc }) => {
+  const [hover, setHover] = useState(false);
+  return (
+    <div style={{ background: hover ? NAVY : '#fff', padding: '36px 28px', transform: hover ? 'translateY(-4px)' : 'none', transition: 'all 0.25s', cursor: 'default' }}
+      onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+      <div style={{ width: '48px', height: '48px', background: hover ? 'rgba(200,16,46,0.18)' : 'rgba(200,16,46,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px', transition: 'background 0.25s' }}>
+        <Icon />
+      </div>
+      <div style={{ fontFamily: P, fontSize: '15px', fontWeight: 700, color: hover ? '#fff' : NAVY, marginBottom: '10px', transition: 'color 0.25s' }}>{title}</div>
+      <div style={{ fontSize: '13px', color: hover ? 'rgba(255,255,255,0.5)' : '#6b7280', lineHeight: 1.7, transition: 'color 0.25s', fontFamily: P, fontWeight: 400 }}>{desc}</div>
+    </div>
+  );
+};
+
+// ── MAIN ──
+const About = () => {
+  useEffect(() => {
+    if (!document.getElementById('about-kf')) {
+      const s = document.createElement('style');
+      s.id = 'about-kf';
+      s.textContent = `
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+        @keyframes tickerMove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+      `;
+      document.head.appendChild(s);
+    }
+  }, []);
+
+  return (
+    <section id="about" style={{ fontFamily: P, background: '#fff' }}>
+      <Ticker />
+      <Hero />
+      <CEO />
+      <TimelineSlider />
+
+      {/* Metrics */}
+      <div style={{ background: '#fff', padding: '80px 0' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 56px' }}>
+          <Reveal style={{ marginBottom: '48px' }}>
+            <Eyebrow>Performance Metrics</Eyebrow>
+            <h2 style={{ fontFamily: P, fontSize: 'clamp(22px,2.8vw,36px)', fontWeight: 800, color: NAVY, marginTop: '12px' }}>
+              Platform Built for <em style={{ fontStyle: 'normal', color: RED }}>Results</em>
             </h2>
-          </FadeIn>
-
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-            gap: '24px',
-          }}>
-            {VALUES.map((v, i) => (
-              <FadeIn key={i} delay={i * 0.1}>
-                <div style={{
-                  padding: '32px',
-                  borderRadius: '16px',
-                  border: '1px solid #e5e7eb',
-                  background: '#fff',
-                  transition: 'all 0.3s ease',
-                  cursor: 'default',
-                }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.borderColor = '#fca5a5';
-                    e.currentTarget.style.transform = 'translateY(-4px)';
-                    e.currentTarget.style.boxShadow = '0 12px 32px rgba(232,49,42,0.08)';
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.borderColor = '#e5e7eb';
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                >
-                  <div style={{
-                    width: '48px', height: '48px', borderRadius: '12px',
-                    background: '#fef2f2',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    marginBottom: '20px',
-                  }}>
-                    <v.icon size={22} color="#E8312A" />
-                  </div>
-                  <h3 style={{
-                    fontWeight: '700', fontSize: '17px',
-                    color: '#111', marginBottom: '10px',
-                  }}>{v.title}</h3>
-                  <p style={{
-                    fontSize: '14px', color: '#6b7280', lineHeight: '1.65',
-                  }}>{v.desc}</p>
-                </div>
-              </FadeIn>
-            ))}
+          </Reveal>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '24px' }}>
+            <MetricBar label="Fuel Cost Reduction" pct="30%"   val="30%"   sub="Average across all active fleets"          delay={0.05} />
+            <MetricBar label="Platform Uptime"      pct="99.9%" val="99.9%" sub="Guaranteed SLA, redundant infrastructure"  delay={0.1}  />
+            <MetricBar label="Days to ROI"          pct="85%"  val="60–90" sub="Days to full investment recovery"          delay={0.15} />
           </div>
         </div>
       </div>
 
+      {/* Values */}
+      <div style={{ background: '#F6F7FA', padding: '80px 0' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 56px' }}>
+          <Reveal style={{ marginBottom: '48px' }}>
+            <Eyebrow>Our Values</Eyebrow>
+            <h2 style={{ fontFamily: P, fontSize: 'clamp(22px,2.8vw,36px)', fontWeight: 800, color: NAVY, marginTop: '12px' }}>
+              What Drives <em style={{ fontStyle: 'normal', color: RED }}>Us Forward</em>
+            </h2>
+          </Reveal>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1px', background: '#E2E6ED', border: '1px solid #E2E6ED' }}>
+            {VALUES.map((v, i) => <ValCard key={i} {...v} />)}
+          </div>
+        </div>
+      </div>
     </section>
   );
 };
