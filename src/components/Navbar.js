@@ -7,9 +7,12 @@ const ChevronDown = () => <span style={{ fontSize: '12px', marginLeft: '4px' }}>
 
 const NAV_LINKS = [
   { label: 'Home',         href: '#home' },
-  { label: 'Case Studies', href: '#case-studies' },
   { label: 'About',        href: '#about' },
-  { label: 'Contact',      href: '#contact' },
+  { label: 'Case Studies', href: '#case-studies' },
+];
+
+const NAV_LINKS_AFTER = [
+  { label: 'Contact', href: '#contact' },
 ];
 
 const DEVICES = [
@@ -60,7 +63,7 @@ const DEVICES = [
   },
 ];
 
-const PK_PRODUCTS_URL = 'https://website.teletix.pk/products';
+const PK_PRODUCTS_URL = 'https://website.teletix.pk';
 
 const Navbar = () => {
   const [scrolled, setScrolled]                       = useState(false);
@@ -107,9 +110,15 @@ const Navbar = () => {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
+  const navLinkStyle = {
+    padding: '7px 14px', fontSize: '13.5px',
+    fontFamily: 'Poppins, sans-serif', fontWeight: '600',
+    color: '#374151',
+    borderRadius: '7px', textDecoration: 'none', transition: 'all 0.2s',
+  };
+
   return (
     <>
-      {/* ── Main Navbar ── */}
       <nav style={{
         background: '#fff',
         borderBottom: '1px solid #e5e7eb',
@@ -118,7 +127,6 @@ const Navbar = () => {
         top: scrolled ? '0' : '40px',
         left: 0, right: 0, zIndex: 1000,
         transition: 'all 0.3s ease',
-        
       }}>
         <div style={{
           maxWidth: '1280px', margin: '0 auto', padding: '0 32px',
@@ -143,17 +151,70 @@ const Navbar = () => {
 
           {/* Desktop nav */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }} className="desktop-nav">
+
+            {/* Home, About, Case Studies */}
             {NAV_LINKS.map(link => (
-              <a key={link.label} href={link.href} style={{
-                padding: '7px 14px', fontSize: '13.5px',
-                fontFamily: 'Poppins, sans-serif', fontWeight: '600',
-                color: '#374151',
-                borderRadius: '7px', textDecoration: 'none', transition: 'all 0.2s',
-              }}
+              <a key={link.label} href={link.href} style={navLinkStyle}
                 onMouseEnter={e => e.currentTarget.style.color = '#E8312A'}
                 onMouseLeave={e => e.currentTarget.style.color = '#374151'}
               >{link.label}</a>
             ))}
+
+            {/* Solutions dropdown */}
+            <div ref={solutionsRef} style={{ position: 'relative' }}>
+              <button
+                onClick={() => { setSolutionsOpen(!solutionsOpen); setDevicesOpen(false); }}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '4px',
+                  padding: '7px 14px', fontSize: '13.5px',
+                  fontFamily: 'Poppins, sans-serif', fontWeight: '600',
+                  color: solutionsOpen ? '#E8312A' : '#374151',
+                  borderRadius: '7px', background: 'none', border: 'none',
+                  cursor: 'pointer', transition: 'all 0.2s',
+                }}
+              >
+                Solutions <ChevronDown />
+              </button>
+
+              {solutionsOpen && (
+                <div style={{
+                  position: 'absolute', top: 'calc(100% + 8px)', left: '50%',
+                  transform: 'translateX(-50%)',
+                  background: '#fff', borderRadius: '12px',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.13)',
+                  border: '1px solid #f0f0f0',
+                  minWidth: '220px', overflow: 'hidden',
+                  zIndex: 9999, animation: 'fadeDown 0.18s ease',
+                }}>
+                  <div style={{ padding: '10px 18px 8px', fontSize: '10.5px', fontWeight: '700', letterSpacing: '0.08em', color: '#9ca3af', fontFamily: 'Poppins, sans-serif', textTransform: 'uppercase', borderBottom: '1px solid #f3f4f6' }}>
+                    Our Solutions
+                  </div>
+                  {loading ? (
+                    <div style={{ padding: '16px 18px', fontSize: '13px', color: '#9ca3af' }}>Loading...</div>
+                  ) : (
+                    SERVICES.map(service => (
+                      <div key={service.slug} onClick={() => handleServiceClick(service)} style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        padding: '11px 18px', fontSize: '13.5px', fontWeight: '500',
+                        fontFamily: 'Poppins, sans-serif', color: '#374151',
+                        cursor: isPK ? 'pointer' : 'default',
+                        transition: 'all 0.15s', borderBottom: '1px solid #f9fafb',
+                      }}
+                        onMouseEnter={e => { if (isPK) { e.currentTarget.style.background = '#fef2f2'; e.currentTarget.style.color = '#E8312A'; } }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#374151'; }}
+                      >
+                        <span>{service.label}</span>
+                        {showComingSoon && (
+                          <span style={{ fontSize: '9px', fontWeight: '700', letterSpacing: '0.05em', background: '#fef3c7', color: '#d97706', padding: '2px 7px', borderRadius: '20px', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+                            Coming Soon
+                          </span>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
 
             {/* Devices dropdown */}
             <div ref={devicesRef} style={{ position: 'relative' }}>
@@ -223,61 +284,14 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* Solutions dropdown */}
-            <div ref={solutionsRef} style={{ position: 'relative' }}>
-              <button
-                onClick={() => { setSolutionsOpen(!solutionsOpen); setDevicesOpen(false); }}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '4px',
-                  padding: '7px 14px', fontSize: '13.5px',
-                  fontFamily: 'Poppins, sans-serif', fontWeight: '600',
-                  color: solutionsOpen ? '#E8312A' : '#374151',
-                  borderRadius: '7px', background: 'none', border: 'none',
-                  cursor: 'pointer', transition: 'all 0.2s',
-                }}
-              >
-                Solutions <ChevronDown />
-              </button>
+            {/* Contact */}
+            {NAV_LINKS_AFTER.map(link => (
+              <a key={link.label} href={link.href} style={navLinkStyle}
+                onMouseEnter={e => e.currentTarget.style.color = '#E8312A'}
+                onMouseLeave={e => e.currentTarget.style.color = '#374151'}
+              >{link.label}</a>
+            ))}
 
-              {solutionsOpen && (
-                <div style={{
-                  position: 'absolute', top: 'calc(100% + 8px)', left: '50%',
-                  transform: 'translateX(-50%)',
-                  background: '#fff', borderRadius: '12px',
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.13)',
-                  border: '1px solid #f0f0f0',
-                  minWidth: '220px', overflow: 'hidden',
-                  zIndex: 9999, animation: 'fadeDown 0.18s ease',
-                }}>
-                  <div style={{ padding: '10px 18px 8px', fontSize: '10.5px', fontWeight: '700', letterSpacing: '0.08em', color: '#9ca3af', fontFamily: 'Poppins, sans-serif', textTransform: 'uppercase', borderBottom: '1px solid #f3f4f6' }}>
-                    Our Solutions
-                  </div>
-                  {loading ? (
-                    <div style={{ padding: '16px 18px', fontSize: '13px', color: '#9ca3af' }}>Loading...</div>
-                  ) : (
-                    SERVICES.map(service => (
-                      <div key={service.slug} onClick={() => handleServiceClick(service)} style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        padding: '11px 18px', fontSize: '13.5px', fontWeight: '500',
-                        fontFamily: 'Poppins, sans-serif', color: '#374151',
-                        cursor: isPK ? 'pointer' : 'default',
-                        transition: 'all 0.15s', borderBottom: '1px solid #f9fafb',
-                      }}
-                        onMouseEnter={e => { if (isPK) { e.currentTarget.style.background = '#fef2f2'; e.currentTarget.style.color = '#E8312A'; } }}
-                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#374151'; }}
-                      >
-                        <span>{service.label}</span>
-                        {showComingSoon && (
-                          <span style={{ fontSize: '9px', fontWeight: '700', letterSpacing: '0.05em', background: '#fef3c7', color: '#d97706', padding: '2px 7px', borderRadius: '20px', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
-                            Coming Soon
-                          </span>
-                        )}
-                      </div>
-                    ))
-                  )}
-                </div>
-              )}
-            </div>
           </div>
 
           {/* Right CTA + hamburger */}
@@ -304,6 +318,8 @@ const Navbar = () => {
         {/* Mobile menu */}
         {mobileOpen && (
           <div style={{ background: '#fff', borderTop: '1px solid #f3f4f6', padding: '12px 24px 20px' }}>
+
+            {/* Home, About, Case Studies */}
             {NAV_LINKS.map(link => (
               <a key={link.label} href={link.href} onClick={() => setMobileOpen(false)} style={{
                 display: 'block', padding: '11px 0', fontSize: '15px', fontWeight: '600',
@@ -311,6 +327,42 @@ const Navbar = () => {
                 borderBottom: '1px solid #f3f4f6', textDecoration: 'none',
               }}>{link.label}</a>
             ))}
+
+            {/* Mobile Solutions */}
+            <div>
+              <button onClick={() => setMobileSolutionsOpen(!mobileSolutionsOpen)} style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                width: '100%', padding: '11px 0', fontSize: '15px', fontWeight: '600',
+                fontFamily: 'Poppins, sans-serif', color: '#374151',
+                background: 'none', border: 'none', borderBottom: '1px solid #f3f4f6', cursor: 'pointer',
+              }}>
+                Solutions <ChevronDown />
+              </button>
+              {mobileSolutionsOpen && (
+                <div style={{ paddingLeft: '12px' }}>
+                  {loading ? (
+                    <div style={{ padding: '10px 0', fontSize: '13px', color: '#9ca3af' }}>Loading...</div>
+                  ) : (
+                    SERVICES.map(service => (
+                      <div key={service.slug} onClick={() => handleServiceClick(service)} style={{
+                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                        padding: '10px 0', fontSize: '14px', fontWeight: '500',
+                        fontFamily: 'Poppins, sans-serif', color: '#374151',
+                        borderBottom: '1px solid #f9fafb',
+                        cursor: isPK ? 'pointer' : 'default',
+                      }}>
+                        <span>{service.label}</span>
+                        {showComingSoon && (
+                          <span style={{ fontSize: '9px', fontWeight: '700', background: '#fef3c7', color: '#d97706', padding: '2px 7px', borderRadius: '20px', textTransform: 'uppercase' }}>
+                            Coming Soon
+                          </span>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
 
             {/* Mobile Devices */}
             <div>
@@ -352,41 +404,15 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* Mobile Solutions */}
-            <div>
-              <button onClick={() => setMobileSolutionsOpen(!mobileSolutionsOpen)} style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                width: '100%', padding: '11px 0', fontSize: '15px', fontWeight: '600',
+            {/* Mobile Contact */}
+            {NAV_LINKS_AFTER.map(link => (
+              <a key={link.label} href={link.href} onClick={() => setMobileOpen(false)} style={{
+                display: 'block', padding: '11px 0', fontSize: '15px', fontWeight: '600',
                 fontFamily: 'Poppins, sans-serif', color: '#374151',
-                background: 'none', border: 'none', borderBottom: '1px solid #f3f4f6', cursor: 'pointer',
-              }}>
-                Solutions <ChevronDown />
-              </button>
-              {mobileSolutionsOpen && (
-                <div style={{ paddingLeft: '12px' }}>
-                  {loading ? (
-                    <div style={{ padding: '10px 0', fontSize: '13px', color: '#9ca3af' }}>Loading...</div>
-                  ) : (
-                    SERVICES.map(service => (
-                      <div key={service.slug} onClick={() => handleServiceClick(service)} style={{
-                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                        padding: '10px 0', fontSize: '14px', fontWeight: '500',
-                        fontFamily: 'Poppins, sans-serif', color: '#374151',
-                        borderBottom: '1px solid #f9fafb',
-                        cursor: isPK ? 'pointer' : 'default',
-                      }}>
-                        <span>{service.label}</span>
-                        {showComingSoon && (
-                          <span style={{ fontSize: '9px', fontWeight: '700', background: '#fef3c7', color: '#d97706', padding: '2px 7px', borderRadius: '20px', textTransform: 'uppercase' }}>
-                            Coming Soon
-                          </span>
-                        )}
-                      </div>
-                    ))
-                  )}
-                </div>
-              )}
-            </div>
+                borderBottom: '1px solid #f3f4f6', textDecoration: 'none',
+              }}>{link.label}</a>
+            ))}
+
           </div>
         )}
 
