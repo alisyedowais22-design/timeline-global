@@ -216,7 +216,7 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* Devices dropdown */}
+            {/* Products dropdown */}
             <div ref={devicesRef} style={{ position: 'relative' }}>
               <button
                 onClick={() => { setDevicesOpen(!devicesOpen); setSolutionsOpen(false); }}
@@ -229,7 +229,7 @@ const Navbar = () => {
                   cursor: 'pointer', transition: 'all 0.2s',
                 }}
               >
-                Devices <ChevronDown />
+                Products <ChevronDown />
               </button>
 
               {devicesOpen && (
@@ -247,7 +247,7 @@ const Navbar = () => {
                     paddingBottom: 10, marginBottom: 12, borderBottom: '1px solid #f3f4f6',
                   }}>
                     <span style={{ fontSize: '10.5px', fontWeight: '700', letterSpacing: '0.08em', color: '#9ca3af', fontFamily: 'Poppins, sans-serif', textTransform: 'uppercase' }}>
-                      Our Devices
+                      Our Products
                     </span>
                     {showComingSoon && (
                       <span style={{ fontSize: '10px', fontWeight: '700', background: '#fef3c7', color: '#d97706', padding: '3px 10px', borderRadius: '20px', textTransform: 'uppercase' }}>
@@ -364,7 +364,7 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* Mobile Devices */}
+            {/* Mobile Products */}
             <div>
               <button onClick={() => setMobileDevicesOpen(!mobileDevicesOpen)} style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -372,7 +372,7 @@ const Navbar = () => {
                 fontFamily: 'Poppins, sans-serif', color: '#374151',
                 background: 'none', border: 'none', borderBottom: '1px solid #f3f4f6', cursor: 'pointer',
               }}>
-                Devices <ChevronDown />
+                Products <ChevronDown />
               </button>
               {mobileDevicesOpen && (
                 <div style={{ paddingLeft: '12px' }}>
