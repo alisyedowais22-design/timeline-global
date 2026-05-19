@@ -15,55 +15,55 @@ const NAV_LINKS_AFTER = [
   { label: 'Contact', href: '#contact' },
 ];
 
+const PK_PRODUCTS_BASE = 'https://website.teletix.pk/our-products';
+
 const DEVICES = [
   {
     category: 'Vehicle Trackers',
     items: [
-      { label: 'GT06N 4G',  desc: 'Classic Upgraded' },
-      { label: 'VG03',      desc: 'Discreet Tracking' },
-      { label: 'VL103D',    desc: 'Tiny Device' },
-      { label: 'VL103M',    desc: 'Minimal Form' },
-      { label: 'VL110C',    desc: 'Any Vehicle' },
+      { label: 'GT06N 4G',  desc: 'Classic Upgraded',   slug: 'gt06n-4g'  },
+      { label: 'VG03',      desc: 'Discreet Tracking',  slug: 'vg03'      },
+      { label: 'VL103D',    desc: 'Tiny Device',        slug: 'vl103d'    },
+      { label: 'VL103M',    desc: 'Minimal Form',       slug: 'vl103m'    },
+      { label: 'VL110C',    desc: 'Any Vehicle',        slug: 'vl110c'    },
     ],
   },
   {
     category: 'AI Dashcams',
     items: [
-      { label: 'JC371',   desc: 'AI Dashcam' },
-      { label: 'JC450',   desc: 'ADAS Dashcam' },
-      { label: 'JC261',   desc: 'Dual Camera AI' },
-      { label: 'JC261P',  desc: 'Pro AI Dashcam' },
-      { label: 'JC400D',  desc: '4G AI Dashcam' },
+      { label: 'JC371',   desc: 'AI Dashcam',        slug: 'jc371'   },
+      { label: 'JC450',   desc: 'ADAS Dashcam',      slug: 'jc450'   },
+      { label: 'JC261',   desc: 'Dual Camera AI',    slug: 'jc261'   },
+      { label: 'JC261P',  desc: 'Pro AI Dashcam',    slug: 'jc261p'  },
+      { label: 'JC400D',  desc: '4G AI Dashcam',     slug: 'jc400d'  },
     ],
   },
   {
     category: 'CAN & OBD Products',
     items: [
-      { label: 'VL502', desc: 'Fleet CAN Tracker' },
+      { label: 'VL502', desc: 'Fleet CAN Tracker', slug: 'vl502' },
     ],
   },
   {
     category: 'Asset Trackers',
     items: [
-      { label: 'LL303PRO', desc: '5 Years Battery' },
-      { label: 'LL301',    desc: 'Silent Protector' },
+      { label: 'LL303PRO', desc: '5 Years Battery',   slug: 'll303pro' },
+      { label: 'LL301',    desc: 'Silent Protector',  slug: 'll301'    },
     ],
   },
   {
     category: 'Personal Trackers',
     items: [
-      { label: 'PL200', desc: 'Silent Guardian' },
+      { label: 'PL200', desc: 'Silent Guardian', slug: 'pl200' },
     ],
   },
   {
     category: 'Non-AI Dashcams',
     items: [
-      { label: 'JC181', desc: 'Basic Dashcam' },
+      { label: 'JC181', desc: 'Basic Dashcam', slug: 'jc181' },
     ],
   },
 ];
-
-const PK_PRODUCTS_URL = 'https://website.teletix.pk';
 
 const Navbar = () => {
   const [scrolled, setScrolled]                       = useState(false);
@@ -88,11 +88,20 @@ const Navbar = () => {
     window.location.href = service.href;
   };
 
-  const handleDeviceClick = () => {
+  // Specific product click — jata hai us product ki page pe
+  const handleDeviceClick = (slug) => {
     if (!isPK) return;
     setDevicesOpen(false);
     setMobileOpen(false);
-    window.location.href = PK_PRODUCTS_URL;
+    window.location.href = `${PK_PRODUCTS_BASE}/${slug}`;
+  };
+
+  // Sirf "View All Products" ya category header click — products listing page
+  const handleViewAllProducts = () => {
+    if (!isPK) return;
+    setDevicesOpen(false);
+    setMobileOpen(false);
+    window.location.href = PK_PRODUCTS_BASE;
   };
 
   useEffect(() => {
@@ -152,7 +161,6 @@ const Navbar = () => {
           {/* Desktop nav */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }} className="desktop-nav">
 
-            {/* Home, About, Case Studies */}
             {NAV_LINKS.map(link => (
               <a key={link.label} href={link.href} style={navLinkStyle}
                 onMouseEnter={e => e.currentTarget.style.color = '#E8312A'}
@@ -262,7 +270,7 @@ const Navbar = () => {
                           {cat.category}
                         </div>
                         {cat.items.map((item) => (
-                          <div key={item.label} onClick={handleDeviceClick} style={{ padding: '5px 6px', borderRadius: 8, cursor: isPK ? 'pointer' : 'default', transition: 'background 0.15s' }}
+                          <div key={item.label} onClick={() => handleDeviceClick(item.slug)} style={{ padding: '5px 6px', borderRadius: 8, cursor: isPK ? 'pointer' : 'default', transition: 'background 0.15s' }}
                             onMouseEnter={e => { if (isPK) e.currentTarget.style.background = '#fef2f2'; }}
                             onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                           >
@@ -275,7 +283,7 @@ const Navbar = () => {
                   </div>
                   {isPK && (
                     <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid #f3f4f6', textAlign: 'center' }}>
-                      <span onClick={handleDeviceClick} style={{ fontSize: '13px', fontWeight: '700', color: '#E8312A', cursor: 'pointer', fontFamily: 'Poppins, sans-serif' }}>
+                      <span onClick={handleViewAllProducts} style={{ fontSize: '13px', fontWeight: '700', color: '#E8312A', cursor: 'pointer', fontFamily: 'Poppins, sans-serif' }}>
                         View All Products →
                       </span>
                     </div>
@@ -284,7 +292,6 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* Contact */}
             {NAV_LINKS_AFTER.map(link => (
               <a key={link.label} href={link.href} style={navLinkStyle}
                 onMouseEnter={e => e.currentTarget.style.color = '#E8312A'}
@@ -319,7 +326,6 @@ const Navbar = () => {
         {mobileOpen && (
           <div style={{ background: '#fff', borderTop: '1px solid #f3f4f6', padding: '12px 24px 20px' }}>
 
-            {/* Home, About, Case Studies */}
             {NAV_LINKS.map(link => (
               <a key={link.label} href={link.href} onClick={() => setMobileOpen(false)} style={{
                 display: 'block', padding: '11px 0', fontSize: '15px', fontWeight: '600',
@@ -382,7 +388,7 @@ const Navbar = () => {
                         {cat.category}
                       </div>
                       {cat.items.map(item => (
-                        <div key={item.label} onClick={handleDeviceClick} style={{
+                        <div key={item.label} onClick={() => handleDeviceClick(item.slug)} style={{
                           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                           padding: '8px 0', borderBottom: '1px solid #f9fafb',
                           cursor: isPK ? 'pointer' : 'default',
@@ -400,11 +406,17 @@ const Navbar = () => {
                       ))}
                     </div>
                   ))}
+                  {isPK && (
+                    <div style={{ padding: '10px 0' }}>
+                      <span onClick={handleViewAllProducts} style={{ fontSize: '13px', fontWeight: '700', color: '#E8312A', cursor: 'pointer', fontFamily: 'Poppins, sans-serif' }}>
+                        View All Products →
+                      </span>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
 
-            {/* Mobile Contact */}
             {NAV_LINKS_AFTER.map(link => (
               <a key={link.label} href={link.href} onClick={() => setMobileOpen(false)} style={{
                 display: 'block', padding: '11px 0', fontSize: '15px', fontWeight: '600',
